@@ -1,6 +1,7 @@
 package main
 
 import (
+	"job-postings-api/internal/handlers"
 	"log"
 	"net/http"
 
@@ -14,13 +15,15 @@ func main() {
 	engine.Use(gin.Logger())
 	engine.Use(gin.Recovery())
 
+	handler := handlers.NewHandler()
+	
 	// router for v1
 	apiv1 := engine.Group("/api/v1")
-	apiv1.GET("/posts")
-	apiv1.GET("/posts/:id")
-	apiv1.POST("/posts")
-	apiv1.PUT("/posts/:id")
-	apiv1.DELETE("/posts/:id")
+	apiv1.GET("/posts", handler.GetPosts)
+	apiv1.GET("/posts/:id", handler.GetPost)
+	apiv1.POST("/posts", handler.CreatePost)
+	apiv1.PUT("/posts/:id", handler.UpdatePost)
+	apiv1.DELETE("/posts/:id", handler.DeletePost)
 
 	// healthcheck
 	engine.GET("/ping", func(c *gin.Context) {
