@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,6 +9,7 @@ import (
 
 func main() {
 	engine := gin.New()
+	engine.SetTrustedProxies(nil)
 
 	engine.Use(gin.Logger())
 	engine.Use(gin.Recovery())
@@ -26,4 +28,8 @@ func main() {
 			"message": "pong",
 		})
 	})
+
+	if err := engine.Run(":8080"); err != nil {
+		log.Fatalf("failed to start server: %v", err)
+	}
 }
