@@ -10,17 +10,12 @@ const (
 type JobType string
 
 const (
-	FullTime   JobType = "full_time"
-	PartTime   JobType = "part_time"
+	FullTime   JobType = "full-time"
+	PartTime   JobType = "part-time"
 	Contract   JobType = "contract"
 	Internship JobType = "internship"
 	Freelance  JobType = "freelance"
 )
-
-type Range struct {
-	Min int `json:"min"`
-	Max int `json:"max"`
-}
 
 type Post struct {
 	Title       string   `json:"title"`
@@ -28,7 +23,7 @@ type Post struct {
 	Location    string   `json:"location"`
 	Description string   `json:"description"`
 	Type        JobType  `json:"type"`
-	SalaryRange Range    `json:"salary_range"`
+	Salary      []int    `json:"salary"`
 	Perks       []string `json:"perks"`
 	Extras      string   `json:"extras"`
 	CreatedAt   string   `json:"created_at"`
@@ -44,7 +39,7 @@ type PostOrderBy struct {
 type PostFilter struct {
 	Title    string `json:"title"`
 	Location string `json:"location"`
-	Range    Range  `json:"range"`
+	Salary   []int  `json:"salary_range"`
 }
 
 type User struct {
