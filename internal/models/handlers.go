@@ -43,12 +43,6 @@ type PostPutRequest struct {
 	Extras      string   `json:"extras"`
 }
 
-type PostOrderBy struct {
-	CreatedAt    string `json:"created_at"`
-	Salary       string `json:"salary"`
-	CompanyCount int    `json:"company_count"`
-}
-
 type ListRequestQueryParams struct {
 	Title     string `form:"title"`
 	Location  string `form:"location"`
@@ -56,8 +50,8 @@ type ListRequestQueryParams struct {
 	MinSalary int    `form:"min_salary"`
 }
 
-type PostFilter struct {
-	Title    string `json:"title"`
-	Location string `json:"location"`
-	Salary   []int  `json:"salary_range"`
+type PostOrderBy struct {
+	CreatedAt    string `json:"created_at"`
+	Salary       string `json:"salary"`
+	CompanyCount int    `json:"company_count"`
 }
