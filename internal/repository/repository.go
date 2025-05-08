@@ -38,7 +38,7 @@ func (r *Repository) DeletePost(id uint) error {
 	return r.storage.DeletePost(id)
 }
 
-func (r *Repository) ListPosts(queryParams models.ListRequestQueryParams) (*models.PostList, error) {
+func (r *Repository) ListPosts() (*models.PostList, error) {
 	posts, err := r.storage.ListPosts()
 	if err != nil {
 		return nil, err
