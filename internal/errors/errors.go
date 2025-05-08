@@ -6,3 +6,7 @@ var (
 	// ErrNotFound is returned when a resource is not found
 	ErrNotFound = errors.New("not found")
 )
+
+func IsNotFound(err error) bool {
+	return errors.Is(err, ErrNotFound)
+}
