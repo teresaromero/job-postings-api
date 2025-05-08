@@ -3,6 +3,8 @@ package main
 import (
 	"job-postings-api/internal/handlers"
 	"job-postings-api/internal/models"
+	"job-postings-api/internal/repository"
+	"job-postings-api/internal/storage"
 	"log"
 	"net/http"
 
@@ -24,11 +26,14 @@ func main() {
 		v.RegisterValidation("jobtype", models.JobTypeValidator)
 	}
 
-	handler := handlers.NewHandler()
+	// init storage, repository and handler
+	storage := storage.NewStorage()
+	repo := repository.NewRepository(storage)
+	handler := handlers.NewHandler(repo)
 
 	// router for v1
 	apiv1 := engine.Group("/api/v1")
-	apiv1.GET("/posts", handler.GetPosts)
+	apiv1.GET("/posts", handler.ListPosts)
 	apiv1.GET("/posts/:id", handler.GetPost)
 	apiv1.POST("/posts", handler.CreatePost)
 	apiv1.PUT("/posts/:id", handler.UpdatePost)
