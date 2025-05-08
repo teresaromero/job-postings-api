@@ -3,8 +3,8 @@ package models
 import "time"
 
 type PostList struct {
-	Posts []Post `json:"posts"`
-	Count int    `json:"count"`
+	Posts []*Post `json:"posts"`
+	Count int     `json:"count"`
 }
 
 type Post struct {
