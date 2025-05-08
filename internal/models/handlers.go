@@ -1,24 +1,5 @@
 package models
 
-type ListPostResponse struct {
-	Posts []PostResponse `json:"posts"`
-	Count int            `json:"count"`
-}
-
-type PostResponse struct {
-	ID          uint     `json:"id"`
-	Title       string   `json:"title"`
-	Company     string   `json:"company"`
-	Location    string   `json:"location"`
-	Description string   `json:"description"`
-	Type        JobType  `json:"type"`
-	Salary      []int    `json:"salary"`
-	Perks       []string `json:"perks"`
-	Extras      string   `json:"extras"`
-	CreatedAt   string   `json:"created_at"`
-	UpdatedAt   string   `json:"updated_at"`
-}
-
 type PostCreateRequest struct {
 	Title       string   `json:"title" binding:"required"`
 	Company     string   `json:"company" binding:"required"`
