@@ -2,10 +2,13 @@ package main
 
 import (
 	"job-postings-api/internal/handlers"
+	"job-postings-api/internal/models"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
 func main() {
@@ -15,8 +18,14 @@ func main() {
 	engine.Use(gin.Logger())
 	engine.Use(gin.Recovery())
 
+	// register a custom validator for jobtype enum values
+	v, ok := binding.Validator.Engine().(*validator.Validate)
+	if ok {
+		v.RegisterValidation("jobtype", models.JobTypeValidator)
+	}
+
 	handler := handlers.NewHandler()
-	
+
 	// router for v1
 	apiv1 := engine.Group("/api/v1")
 	apiv1.GET("/posts", handler.GetPosts)
