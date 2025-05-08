@@ -5,10 +5,10 @@ import (
 )
 
 type storageInterface interface {
-	GetPost(id uint) (*models.Post, error)
+	GetPost(id string) (*models.Post, error)
 	CreatePost(post *models.PostCreateRequest) (*models.Post, error)
-	UpdatePost(id uint, post *models.PostPutRequest) error
-	DeletePost(id uint) error
+	UpdatePost(id string, post *models.PostPutRequest) error
+	DeletePost(id string) error
 	ListPosts() ([]*models.Post, error)
 }
 
@@ -22,7 +22,7 @@ func NewRepository(storage storageInterface) *Repository {
 	}
 }
 
-func (r *Repository) GetPost(id uint) (*models.Post, error) {
+func (r *Repository) GetPost(id string) (*models.Post, error) {
 	return r.storage.GetPost(id)
 }
 
@@ -30,11 +30,11 @@ func (r *Repository) CreatePost(post *models.PostCreateRequest) (*models.Post, e
 	return r.storage.CreatePost(post)
 }
 
-func (r *Repository) UpdatePost(id uint, post *models.PostPutRequest) error {
+func (r *Repository) UpdatePost(id string, post *models.PostPutRequest) error {
 	return r.storage.UpdatePost(id, post)
 }
 
-func (r *Repository) DeletePost(id uint) error {
+func (r *Repository) DeletePost(id string) error {
 	return r.storage.DeletePost(id)
 }
 

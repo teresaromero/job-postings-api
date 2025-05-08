@@ -10,16 +10,16 @@ import (
 )
 
 type Storage struct {
-	postMap map[uint]models.Post
+	postMap map[string]models.Post
 }
 
 func NewStorage() *Storage {
 	return &Storage{
-		postMap: make(map[uint]models.Post),
+		postMap: make(map[string]models.Post),
 	}
 }
 
-func (s *Storage) GetPost(id uint) (*models.Post, error) {
+func (s *Storage) GetPost(id string) (*models.Post, error) {
 	item, ok := s.postMap[id]
 	if !ok {
 		return nil, fmt.Errorf("%w: post not found", errors.ErrNotFound)
@@ -30,7 +30,7 @@ func (s *Storage) GetPost(id uint) (*models.Post, error) {
 
 func (s *Storage) CreatePost(post *models.PostCreateRequest) (*models.Post, error) {
 	p := models.Post{
-		ID:          uint(uuid.New().ID()),
+		ID:          fmt.Sprintf("%v", uuid.New().ID()),
 		Title:       post.Title,
 		Company:     post.Company,
 		Description: post.Description,
@@ -48,7 +48,7 @@ func (s *Storage) CreatePost(post *models.PostCreateRequest) (*models.Post, erro
 
 }
 
-func (s *Storage) UpdatePost(id uint, post *models.PostPutRequest) error {
+func (s *Storage) UpdatePost(id string, post *models.PostPutRequest) error {
 	item, ok := s.postMap[id]
 	if !ok {
 		return fmt.Errorf("%w: post not found", errors.ErrNotFound)
@@ -69,7 +69,7 @@ func (s *Storage) UpdatePost(id uint, post *models.PostPutRequest) error {
 	return nil
 }
 
-func (s *Storage) DeletePost(id uint) error {
+func (s *Storage) DeletePost(id string) error {
 	item, ok := s.postMap[id]
 	if !ok {
 		return fmt.Errorf("%w: post not found", errors.ErrNotFound)

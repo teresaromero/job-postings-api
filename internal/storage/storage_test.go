@@ -14,7 +14,7 @@ func TestStorage_GetPost(t *testing.T) {
 
 	// Setup test data
 	testPost := models.Post{
-		ID:          1,
+		ID:          "1",
 		Title:       "Software Engineer",
 		Company:     "Test Company",
 		Description: "Test Description",
@@ -30,19 +30,19 @@ func TestStorage_GetPost(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		id      uint
+		id      string
 		want    *models.Post
 		wantErr error
 	}{
 		{
 			name:    "existing post",
-			id:      1,
+			id:      "1",
 			want:    &testPost,
 			wantErr: nil,
 		},
 		{
 			name:    "non-existing post",
-			id:      999,
+			id:      "999",
 			want:    nil,
 			wantErr: errors.ErrNotFound,
 		},
@@ -118,7 +118,7 @@ func TestStorage_UpdatePost(t *testing.T) {
 
 	// Setup test data
 	testPost := models.Post{
-		ID:          1,
+		ID:          "1",
 		Title:       "Software Engineer",
 		Company:     "Test Company",
 		Description: "Test Description",
@@ -134,13 +134,13 @@ func TestStorage_UpdatePost(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		id      uint
+		id      string
 		post    *models.PostPutRequest
 		wantErr error
 	}{
 		{
 			name: "update existing post",
-			id:   1,
+			id:   "1",
 			post: &models.PostPutRequest{
 				Title:       "Updated Title",
 				Company:     "Updated Company",
@@ -156,7 +156,7 @@ func TestStorage_UpdatePost(t *testing.T) {
 		},
 		{
 			name: "update non-existing post",
-			id:   999,
+			id:   "999",
 			post: &models.PostPutRequest{
 				Title: "Test",
 			},
@@ -192,7 +192,7 @@ func TestStorage_DeletePost(t *testing.T) {
 
 	// Setup test data
 	testPost := models.Post{
-		ID:          1,
+		ID:          "1",
 		Title:       "Software Engineer",
 		Company:     "Test Company",
 		Description: "Test Description",
@@ -208,17 +208,17 @@ func TestStorage_DeletePost(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		id      uint
+		id      string
 		wantErr error
 	}{
 		{
 			name:    "delete existing post",
-			id:      1,
+			id:      "1",
 			wantErr: nil,
 		},
 		{
 			name:    "delete non-existing post",
-			id:      999,
+			id:      "999",
 			wantErr: errors.ErrNotFound,
 		},
 	}
@@ -241,59 +241,73 @@ func TestStorage_DeletePost(t *testing.T) {
 func TestStorage_ListPosts(t *testing.T) {
 	s := NewStorage()
 
-	// Test empty storage
-	t.Run("empty storage", func(t *testing.T) {
-		posts, err := s.ListPosts()
-		assert.NoError(t, err)
-		assert.Empty(t, posts)
-	})
-
 	// Setup test data
 	testPosts := []models.Post{
 		{
-			ID:          1,
+			ID:          "1",
 			Title:       "Software Engineer",
-			Company:     "Company A",
-			Description: "Description A",
+			Company:     "Test Company",
+			Description: "Test Description",
 			Type:        "Full-time",
 			Location:    "Remote",
 			Salary:      []int{50000, 80000},
+			Perks:       []string{"Health Insurance"},
+			Extras:      "Flexible Hours",
 			CreatedAt:   time.Now(),
 			UpdatedAt:   time.Now(),
 		},
 		{
-			ID:          2,
+			ID:          "2",
 			Title:       "Product Manager",
-			Company:     "Company B",
-			Description: "Description B",
+			Company:     "Another Company",
+			Description: "Another Description",
 			Type:        "Part-time",
 			Location:    "On-site",
 			Salary:      []int{60000, 90000},
+			Perks:       []string{"401k"},
+			Extras:      "Gym Membership",
 			CreatedAt:   time.Now(),
 			UpdatedAt:   time.Now(),
 		},
 	}
 
-	// Add posts to storage
+	// Add test posts to storage
 	for _, post := range testPosts {
 		s.postMap[post.ID] = post
 	}
 
-	t.Run("storage with posts", func(t *testing.T) {
-		posts, err := s.ListPosts()
+	// Test listing posts
+	t.Run("list all posts", func(t *testing.T) {
+		got, err := s.ListPosts()
 		assert.NoError(t, err)
-		assert.Len(t, posts, len(testPosts))
+		assert.Len(t, got, len(testPosts))
 
-		// Verify each post was returned
-		for _, got := range posts {
-			original := testPosts[got.ID-1] // Index 0 based, IDs 1 based
-			assert.Equal(t, original.ID, got.ID)
-			assert.Equal(t, original.Title, got.Title)
-			assert.Equal(t, original.Company, got.Company)
-			assert.Equal(t, original.Description, got.Description)
-			assert.Equal(t, original.Type, got.Type)
-			assert.Equal(t, original.Location, got.Location)
-			assert.Equal(t, original.Salary, got.Salary)
+		// Verify each post is in the list
+		for _, want := range testPosts {
+			found := false
+			for _, post := range got {
+				if post.ID == want.ID {
+					assert.Equal(t, want.Title, post.Title)
+					assert.Equal(t, want.Company, post.Company)
+					assert.Equal(t, want.Description, post.Description)
+					assert.Equal(t, want.Type, post.Type)
+					assert.Equal(t, want.Location, post.Location)
+					assert.Equal(t, want.Salary, post.Salary)
+					assert.Equal(t, want.Perks, post.Perks)
+					assert.Equal(t, want.Extras, post.Extras)
+					found = true
+					break
+				}
+			}
+			assert.True(t, found, "Post with ID %s not found in list", want.ID)
 		}
+	})
+
+	// Test empty storage
+	t.Run("list empty storage", func(t *testing.T) {
+		s := NewStorage()
+		got, err := s.ListPosts()
+		assert.NoError(t, err)
+		assert.Empty(t, got)
 	})
 }

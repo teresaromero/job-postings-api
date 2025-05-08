@@ -8,7 +8,7 @@ type PostList struct {
 }
 
 type Post struct {
-	ID          uint      `json:"id"`
+	ID          string    `json:"id"`
 	Title       string    `json:"title"`
 	Company     string    `json:"company"`
 	Location    string    `json:"location"`
