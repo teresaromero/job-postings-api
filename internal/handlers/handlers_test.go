@@ -126,6 +126,7 @@ func TestHandler_ListPosts(t *testing.T) {
 			handler := NewHandler(mockRepo)
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
+			c.Request = httptest.NewRequest("GET", "/posts", nil)
 
 			handler.ListPosts(c)
 
