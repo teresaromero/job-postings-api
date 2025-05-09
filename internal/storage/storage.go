@@ -71,6 +71,9 @@ func (s *Storage) UpdatePost(id string, post *models.PostPutRequest) error {
 	s.postMap[id] = item
 	if item.Company != post.Company {
 		s.companyIndex[item.Company]--
+		if s.companyIndex[item.Company] == 0 {
+			delete(s.companyIndex, item.Company)
+		}
 		s.companyIndex[post.Company]++
 	}
 
@@ -85,6 +88,9 @@ func (s *Storage) DeletePost(id string) error {
 
 	delete(s.postMap, item.ID)
 	s.companyIndex[item.Company]--
+	if s.companyIndex[item.Company] == 0 {
+		delete(s.companyIndex, item.Company)
+	}
 	return nil
 }
 
