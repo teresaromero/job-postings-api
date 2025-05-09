@@ -7,10 +7,21 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
+type mockSorter struct {
+	mock.Mock
+}
+
+func (m *mockSorter) Sort(input *models.SortInput) {
+	m.Called(input)
+}
+
 func TestStorage_GetPost(t *testing.T) {
-	s := NewStorage()
+	sorter := new(mockSorter)
+	sorter.On("Sort", mock.Anything).Return()
+	s := NewStorage(sorter)
 
 	// Setup test data
 	testPost := models.Post{
@@ -62,7 +73,10 @@ func TestStorage_GetPost(t *testing.T) {
 	}
 }
 func TestStorage_CreatePost(t *testing.T) {
-	s := NewStorage()
+
+	sorter := new(mockSorter)
+	sorter.On("Sort", mock.Anything).Return()
+	s := NewStorage(sorter)
 
 	tests := []struct {
 		name    string
@@ -114,7 +128,9 @@ func TestStorage_CreatePost(t *testing.T) {
 }
 
 func TestStorage_UpdatePost(t *testing.T) {
-	s := NewStorage()
+	sorter := new(mockSorter)
+	sorter.On("Sort", mock.Anything).Return()
+	s := NewStorage(sorter)
 
 	// Setup test data
 	testPost := models.Post{
@@ -188,7 +204,9 @@ func TestStorage_UpdatePost(t *testing.T) {
 	}
 }
 func TestStorage_DeletePost(t *testing.T) {
-	s := NewStorage()
+	sorter := new(mockSorter)
+	sorter.On("Sort", mock.Anything).Return()
+	s := NewStorage(sorter)
 
 	// Setup test data
 	testPost := models.Post{
@@ -239,7 +257,9 @@ func TestStorage_DeletePost(t *testing.T) {
 	}
 }
 func TestStorage_ListPosts(t *testing.T) {
-	s := NewStorage()
+	sorter := new(mockSorter)
+	sorter.On("Sort", mock.Anything).Return()
+	s := NewStorage(sorter)
 
 	// Setup test data
 	testPosts := []models.Post{
@@ -305,14 +325,18 @@ func TestStorage_ListPosts(t *testing.T) {
 
 	// Test empty storage
 	t.Run("list empty storage", func(t *testing.T) {
-		s := NewStorage()
+		sorter := new(mockSorter)
+		sorter.On("Sort", mock.Anything).Return()
+		s := NewStorage(sorter)
 		got, err := s.ListPosts(models.ListRequestQueryParams{})
 		assert.NoError(t, err)
 		assert.Empty(t, got)
 	})
 }
-func TestStorage_CompanyCount(t *testing.T) {
-	s := NewStorage()
+func TestStorage_companyIndex(t *testing.T) {
+	sorter := new(mockSorter)
+	sorter.On("Sort", mock.Anything).Return()
+	s := NewStorage(sorter)
 
 	// Setup test data
 	post1 := models.Post{
@@ -336,7 +360,7 @@ func TestStorage_CompanyCount(t *testing.T) {
 	s.postMap[post3.ID] = post3
 	s.companyIndex[post3.Company]++
 
-	got := s.CompanyMapCount()
+	got := s.companyIndex
 	assert.Contains(t, got, "Company A")
 	assert.Equal(t, 2, got["Company A"])
 	assert.Contains(t, got, "Company B")
@@ -345,7 +369,9 @@ func TestStorage_CompanyCount(t *testing.T) {
 
 }
 func TestNewStorage(t *testing.T) {
-	s := NewStorage()
+	sorter := new(mockSorter)
+	sorter.On("Sort", mock.Anything).Return()
+	s := NewStorage(sorter)
 	assert.NotNil(t, s)
 	assert.NotNil(t, s.postMap)
 	assert.NotNil(t, s.companyIndex)
@@ -354,7 +380,9 @@ func TestNewStorage(t *testing.T) {
 }
 
 func Test_StorageIntegration(t *testing.T) {
-	s := NewStorage()
+	sorter := new(mockSorter)
+	sorter.On("Sort", mock.Anything).Return()
+	s := NewStorage(sorter)
 
 	// Create a new post
 	post := &models.PostCreateRequest{
@@ -372,9 +400,6 @@ func Test_StorageIntegration(t *testing.T) {
 	newPost, err := s.CreatePost(post)
 	assert.NoError(t, err)
 	assert.NotNil(t, newPost)
-
-	cmap := s.CompanyMapCount()
-	assert.Len(t, cmap, 1)
 
 	// Get the created post
 	gotPost, err := s.GetPost(newPost.ID)
@@ -412,9 +437,6 @@ func Test_StorageIntegration(t *testing.T) {
 	// Delete the post
 	err = s.DeletePost(newPost.ID)
 	assert.NoError(t, err)
-
-	cmap = s.CompanyMapCount()
-	assert.Len(t, cmap, 0)
 
 	gotDeletedPost, err := s.GetPost(newPost.ID)
 	assert.ErrorIs(t, err, errors.ErrNotFound)

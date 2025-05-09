@@ -32,9 +32,9 @@ func main() {
 	}
 
 	// init storage, repository and handler
-	storage := storage.NewStorage()
 	sorter := sorting.NewSorter(cfg.SortRulesOrder)
-	repo := repository.NewRepository(storage, sorter)
+	storage := storage.NewStorage(sorter)
+	repo := repository.NewRepository(storage)
 	handler := handlers.NewHandler(repo)
 
 	// router for v1

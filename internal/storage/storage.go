@@ -9,16 +9,22 @@ import (
 	"github.com/google/uuid"
 )
 
-type Storage struct {
-	postMap map[string]models.Post
-
-	companyIndex map[string]int
+type sorterInterface interface {
+	Sort(input *models.SortInput)
 }
 
-func NewStorage() *Storage {
+type Storage struct {
+	postMap      map[string]models.Post
+	companyIndex map[string]int
+
+	sorter sorterInterface
+}
+
+func NewStorage(sorter sorterInterface) *Storage {
 	return &Storage{
 		postMap:      make(map[string]models.Post),
 		companyIndex: make(map[string]int),
+		sorter:       sorter,
 	}
 }
 
@@ -97,7 +103,6 @@ func (s *Storage) DeletePost(id string) error {
 func (s *Storage) ListPosts(filter models.ListRequestQueryParams) ([]*models.Post, error) {
 	list := make([]*models.Post, 0, len(s.postMap))
 	for id := range s.postMap {
-
 		if ok := isAllowedByFilter(s.postMap[id], filter); !ok {
 			continue
 		}
@@ -105,10 +110,11 @@ func (s *Storage) ListPosts(filter models.ListRequestQueryParams) ([]*models.Pos
 		job := s.postMap[id]
 		list = append(list, &job)
 	}
+	// sort the list
+	input := &models.SortInput{
+		Posts:      list,
+		CompanyMap: s.companyIndex,
+	}
+	s.sorter.Sort(input)
 	return list, nil
-}
-
-// CompanyMapCount returns a map of company names to the number of job postings
-func (s *Storage) CompanyMapCount() map[string]int {
-	return s.companyIndex
 }

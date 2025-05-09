@@ -10,22 +10,15 @@ type storageInterface interface {
 	UpdatePost(id string, post *models.PostPutRequest) error
 	DeletePost(id string) error
 	ListPosts(filter models.ListRequestQueryParams) ([]*models.Post, error)
-	CompanyMapCount() map[string]int
-}
-
-type sorterInterface interface {
-	Sort(input *models.SortInput)
 }
 
 type Repository struct {
 	storage storageInterface
-	sorter  sorterInterface
 }
 
-func NewRepository(storage storageInterface, sorter sorterInterface) *Repository {
+func NewRepository(storage storageInterface) *Repository {
 	return &Repository{
 		storage: storage,
-		sorter:  sorter,
 	}
 }
 
@@ -50,12 +43,6 @@ func (r *Repository) ListPosts(filter models.ListRequestQueryParams) (*models.Po
 	if err != nil {
 		return nil, err
 	}
-	companyMap := r.storage.CompanyMapCount()
-	input := &models.SortInput{
-		Posts:      posts,
-		CompanyMap: companyMap,
-	}
-	r.sorter.Sort(input)
 
 	return &models.PostList{
 		Posts: posts,
