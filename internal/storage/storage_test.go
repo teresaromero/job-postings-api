@@ -311,3 +311,133 @@ func TestStorage_ListPosts(t *testing.T) {
 		assert.Empty(t, got)
 	})
 }
+func TestStorage_CompanyCount(t *testing.T) {
+	s := NewStorage()
+
+	// Setup test data
+	post1 := models.Post{
+		ID:      "1",
+		Company: "Company A",
+	}
+	post2 := models.Post{
+		ID:      "2",
+		Company: "Company A",
+	}
+	post3 := models.Post{
+		ID:      "3",
+		Company: "Company B",
+	}
+
+	// Add test posts to storage and increment company counts
+	s.postMap[post1.ID] = post1
+	s.companyIndex[post1.Company]++
+	s.postMap[post2.ID] = post2
+	s.companyIndex[post2.Company]++
+	s.postMap[post3.ID] = post3
+	s.companyIndex[post3.Company]++
+
+	tests := []struct {
+		name    string
+		company string
+		want    int
+	}{
+		{
+			name:    "company with multiple posts",
+			company: "Company A",
+			want:    2,
+		},
+		{
+			name:    "company with single post",
+			company: "Company B",
+			want:    1,
+		},
+		{
+			name:    "non-existing company",
+			company: "Company C",
+			want:    0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := s.CompanyCount(tt.company)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+func TestNewStorage(t *testing.T) {
+	s := NewStorage()
+	assert.NotNil(t, s)
+	assert.NotNil(t, s.postMap)
+	assert.NotNil(t, s.companyIndex)
+	assert.Empty(t, s.postMap)
+	assert.Empty(t, s.companyIndex)
+}
+
+func Test_StorageIntegration(t *testing.T) {
+	s := NewStorage()
+
+	// Create a new post
+	post := &models.PostCreateRequest{
+		Title:       "Software Engineer",
+		Company:     "Tech Company",
+		Description: "Develop software solutions.",
+		Type:        "Full-time",
+		Location:    "Remote",
+		MinSalary:   70000,
+		MaxSalary:   120000,
+		Perks:       []string{"Health Insurance", "401k"},
+		Extras:      "Flexible Hours",
+	}
+
+	newPost, err := s.CreatePost(post)
+	assert.NoError(t, err)
+	assert.NotNil(t, newPost)
+
+	count := s.CompanyCount(newPost.Company)
+	assert.Equal(t, 1, count)
+
+	// Get the created post
+	gotPost, err := s.GetPost(newPost.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, newPost.ID, gotPost.ID)
+
+	// Update the post
+	updateRequest := &models.PostPutRequest{
+		Company:     "Tech Company",
+		Perks:       []string{"Health Insurance", "401k"},
+		Extras:      "Flexible Hours",
+		Title:       "Senior Software Engineer",
+		Description: "Lead software development projects.",
+		Type:        "Full-time",
+		Location:    "Remote",
+		MinSalary:   80000,
+		MaxSalary:   130000,
+	}
+	err = s.UpdatePost(newPost.ID, updateRequest)
+	assert.NoError(t, err)
+
+	gotUpdatedPost, err := s.GetPost(newPost.ID)
+	assert.NoError(t, err)
+	assert.Equal(t, updateRequest.Title, gotUpdatedPost.Title)
+
+	// List posts
+	listedPosts, err := s.ListPosts(models.ListRequestQueryParams{})
+	assert.NoError(t, err)
+	assert.Len(t, listedPosts, 1)
+
+	for _, post := range listedPosts {
+		assert.Equal(t, newPost.Company, post.Company)
+	}
+
+	// Delete the post
+	err = s.DeletePost(newPost.ID)
+	assert.NoError(t, err)
+
+	count = s.CompanyCount(newPost.Company)
+	assert.Equal(t, 0, count)
+
+	gotDeletedPost, err := s.GetPost(newPost.ID)
+	assert.ErrorIs(t, err, errors.ErrNotFound)
+	assert.Nil(t, gotDeletedPost)
+}

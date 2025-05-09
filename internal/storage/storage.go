@@ -11,11 +11,14 @@ import (
 
 type Storage struct {
 	postMap map[string]models.Post
+
+	companyIndex map[string]int
 }
 
 func NewStorage() *Storage {
 	return &Storage{
-		postMap: make(map[string]models.Post),
+		postMap:      make(map[string]models.Post),
+		companyIndex: make(map[string]int),
 	}
 }
 
@@ -44,6 +47,7 @@ func (s *Storage) CreatePost(post *models.PostCreateRequest) (*models.Post, erro
 	}
 
 	s.postMap[p.ID] = p
+	s.companyIndex[p.Company]++
 	return &p, nil
 
 }
@@ -65,6 +69,10 @@ func (s *Storage) UpdatePost(id string, post *models.PostPutRequest) error {
 	item.UpdatedAt = time.Now()
 
 	s.postMap[id] = item
+	if item.Company != post.Company {
+		s.companyIndex[item.Company]--
+		s.companyIndex[post.Company]++
+	}
 
 	return nil
 }
@@ -76,6 +84,7 @@ func (s *Storage) DeletePost(id string) error {
 	}
 
 	delete(s.postMap, item.ID)
+	s.companyIndex[item.Company]--
 	return nil
 }
 
@@ -91,4 +100,14 @@ func (s *Storage) ListPosts(filter models.ListRequestQueryParams) ([]*models.Pos
 		list = append(list, &job)
 	}
 	return list, nil
+}
+
+// CompanyCount returns the number of job posts for a given company
+// It returns 0 if the company does not exist in the index
+func (s *Storage) CompanyCount(company string) int {
+	count, ok := s.companyIndex[company]
+	if !ok {
+		return 0
+	}
+	return count
 }

@@ -20,3 +20,9 @@ type Post struct {
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 }
+
+// CreatedAtLastSevenDays checks if the post was created in the last 7 days
+// and returns true if it was, false otherwise.
+func (p *Post) CreatedAtLastSevenDays() bool {
+	return time.Since(p.CreatedAt).Hours() < 7*24
+}
