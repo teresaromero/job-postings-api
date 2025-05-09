@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"job-postings-api/internal/errors"
 	"job-postings-api/internal/models"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -79,11 +80,42 @@ func (s *Storage) DeletePost(id string) error {
 	return nil
 }
 
-func (s *Storage) ListPosts() ([]*models.Post, error) {
+func (s *Storage) ListPosts(filter *models.ListRequestQueryParams) ([]*models.Post, error) {
 	list := make([]*models.Post, 0, len(s.postMap))
 	for id := range s.postMap {
+
+		if ok := applyFilter(s.postMap[id], filter); !ok {
+			continue
+		}
+
 		job := s.postMap[id]
 		list = append(list, &job)
 	}
 	return list, nil
+}
+
+// applyFilter checks if the job match the filter criteria.
+func applyFilter(job models.Post, filter *models.ListRequestQueryParams) bool {
+	// TODO: enhance the filter support with lowecase comparison
+	if filter == nil {
+		return true
+	}
+	// composable filter - check if any of the filter fields match
+	ok := false
+	if filter.Company != "" && filter.Company == job.Company {
+		ok = true
+	}
+	if filter.Title != "" && strings.Contains(job.Title, filter.Title) {
+		ok = true
+	}
+	if filter.Location != "" && strings.Contains(job.Location, filter.Location) {
+		ok = true
+	}
+	if filter.MaxSalary != 0 && filter.MaxSalary >= job.Salary[0] {
+		ok = true
+	}
+	if filter.MinSalary != 0 && filter.MinSalary <= job.Salary[1] {
+		ok = true
+	}
+	return ok
 }
