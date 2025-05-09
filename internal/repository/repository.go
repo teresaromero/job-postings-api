@@ -2,6 +2,7 @@ package repository
 
 import (
 	"job-postings-api/internal/models"
+	"job-postings-api/internal/sorting"
 )
 
 type storageInterface interface {
@@ -10,6 +11,7 @@ type storageInterface interface {
 	UpdatePost(id string, post *models.PostPutRequest) error
 	DeletePost(id string) error
 	ListPosts(filter models.ListRequestQueryParams) ([]*models.Post, error)
+	CompanyMapCount() map[string]int
 }
 
 type Repository struct {
@@ -43,6 +45,10 @@ func (r *Repository) ListPosts(filter models.ListRequestQueryParams) (*models.Po
 	if err != nil {
 		return nil, err
 	}
+	companyMap := r.storage.CompanyMapCount()
+
+	sorting.SortPosts(posts, companyMap)
+
 	return &models.PostList{
 		Posts: posts,
 		Count: len(posts),
