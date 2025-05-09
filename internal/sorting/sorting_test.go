@@ -136,7 +136,7 @@ func TestSortPosts(t *testing.T) {
 				Posts:      tt.posts,
 				CompanyMap: tt.companyMap,
 			}
-			sorter.Sort(input)
+			sorter.Sort(input, nil)
 			assert.Equal(t, tt.want, tt.posts, "posts should be sorted correctly")
 		})
 	}

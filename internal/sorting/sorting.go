@@ -23,13 +23,16 @@ func NewSorter() *Sorter {
 	}
 }
 
-func (s *Sorter) Sort(input *models.SortInput) {
+func (s *Sorter) Sort(input *models.SortInput, order []int) {
 	// order represents the priority of the sorting rules indexes
 	// 0: sort by company posts count
 	// 1: sort by high salary
 	// 2: sort by last seven days
 	defaultOrder := []int{0, 1, 2}
-	for idx := range defaultOrder {
+	if len(order) == 0 {
+		order = defaultOrder
+	}
+	for idx := range order {
 		s.rules[idx](input)
 	}
 }

@@ -13,7 +13,7 @@ type repositoryInterface interface {
 	CreatePost(post *models.PostCreateRequest) (*models.Post, error)
 	UpdatePost(id string, post *models.PostPutRequest) error
 	DeletePost(id string) error
-	ListPosts(filter models.ListRequestQueryParams) (*models.PostList, error)
+	ListPosts(filter models.ListRequestQueryParams, order []int) (*models.PostList, error)
 }
 
 type Handler struct {
@@ -34,7 +34,8 @@ func (h *Handler) ListPosts(c *gin.Context) {
 		return
 	}
 
-	posts, err := h.repo.ListPosts(filter)
+	sortingRulesOrder := []int{0, 1, 2}
+	posts, err := h.repo.ListPosts(filter, sortingRulesOrder)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to list posts"})
 		return

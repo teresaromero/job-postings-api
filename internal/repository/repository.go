@@ -14,7 +14,7 @@ type storageInterface interface {
 }
 
 type sorterInterface interface {
-	Sort(input *models.SortInput)
+	Sort(input *models.SortInput, order []int)
 }
 
 type Repository struct {
@@ -45,7 +45,7 @@ func (r *Repository) DeletePost(id string) error {
 	return r.storage.DeletePost(id)
 }
 
-func (r *Repository) ListPosts(filter models.ListRequestQueryParams) (*models.PostList, error) {
+func (r *Repository) ListPosts(filter models.ListRequestQueryParams, order []int) (*models.PostList, error) {
 	posts, err := r.storage.ListPosts(filter)
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (r *Repository) ListPosts(filter models.ListRequestQueryParams) (*models.Po
 		Posts:      posts,
 		CompanyMap: companyMap,
 	}
-	r.sorter.Sort(input)
+	r.sorter.Sort(input, order)
 
 	return &models.PostList{
 		Posts: posts,
