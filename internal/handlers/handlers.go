@@ -28,7 +28,13 @@ func NewHandler(repo repositoryInterface) *Handler {
 }
 
 func (h *Handler) ListPosts(c *gin.Context) {
-	// Handler logic for getting posts
+	posts, err := h.repo.ListPosts()
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to list posts"})
+		return
+	}
+
+	c.JSON(http.StatusOK, posts)
 }
 
 func (h *Handler) GetPost(c *gin.Context) {
