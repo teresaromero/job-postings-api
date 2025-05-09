@@ -10,9 +10,13 @@ build:
 	@echo "Building..."
 	go build -o bin/$(BINARY_NAME) $(MAIN_FILE)
 
-run:
+dev:
 	@echo "Running..."
 	go run $(MAIN_FILE)
+
+run: build
+	@echo "Running..."
+	./bin/$(BINARY_NAME)
 
 clean:
 	@echo "Cleaning..."
