@@ -1,0 +1,226 @@
+# yaml-language-server: $schema=urn:ietf:params:xml:ns:yang:openapi-schema
+openapi: 3.0.0
+info:
+  title: Job Postings API
+  description: API for managing job postings
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /ping:
+    get:
+      operationId: ping
+      summary: healthcheck endpoint
+      responses:
+        '200':
+          description: Successful response
+  /api/v1/posts:
+    get:
+      operationId: listJobPostings
+      summary: List all job postings
+      description: "Returns a list of all job postings, ordered by the following criteria:
+        - Posts created in the last 7 days rank first above older posts [rule id: 2]
+        - Posts with higher salaries rank first above posts with lower salaries [rule id: 1]
+        - Posts made by companies with more open job posts rank first than those for companies with less posts [rule id: 0]
+        
+        Sorting priority rule id slice is by default [0,1,2]. This can be changed using the env variable SORT_RULES_ORDER
+        For example:
+        export SORT_RULES_ORDER=[1,0,2]
+        "
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/JobPosting'
+                  count:
+                    description: number of items in the response
+                    type: number
+
+    post:
+      operationId: createJobPosting
+      summary: Create a new job posting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobPostPayload'
+            example:
+              title: "Senior Software Engineer"
+              company: "Tech Corp"
+              type: freelance
+              location: "San Francisco, CA"
+              description: "Looking for an experienced software engineer with 5+ years of experience in backend development."
+              requirements: ["Java", "Spring Boot", "SQL", "AWS"]
+              max_salary: 150000
+              min_salary: 90000
+      responses:
+        '201':
+          description: Job posting created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobPosting'
+
+  /api/v1/posts/{id}:
+    get:
+      operationId: getJobPosting
+      summary: Get a job posting by ID
+      description: Retrieve a job posting by its id
+      parameters:
+        - $ref: '#/components/parameters/JobIdParam'
+      responses:
+        '200':
+          description: Job posting found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobPosting'
+              example:
+                id: "12345678"
+                title: "Full Stack Developer"
+                company: "Innovation Labs"
+                location: "New York, NY"
+                description: "Join our dynamic team building modern web applications..."
+                type: "full-time"
+                salary: [90000, 130000]
+                perks: ["Health Insurance", "Remote Work", "401k"]
+                extras: "Flexible working hours"
+                created_at: "2024-01-20T10:00:00Z"
+                updated_at: "2024-01-20T10:00:00Z"
+    put:
+      operationId: updateJobPosting
+      summary: Update a job posting
+      parameters:
+        - $ref: '#/components/parameters/JobIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobPostPayload'
+      responses:
+        '204':
+          description: Job posting updated
+    delete:
+      operationId: deleteJobPosting
+      summary: Delete a job posting
+      parameters:
+        - $ref: '#/components/parameters/JobIdParam'
+      responses:
+        '204':
+          description: Job posting deleted
+
+components:
+  parameters:
+    JobIdParam:
+      name: id
+      description: unique identifyer of the job posting
+      in: path
+      required: true
+      schema:
+        type: string
+  
+  schemas:
+    JobPosting:
+      type: object
+      description: Schema representing a job posting
+      properties:
+        id:
+          type: string
+          format: uuid          
+        title:
+          type: string
+        company:
+          type: string
+        location:
+          type: string
+        description:
+          type: string
+        type:
+          $ref: '#/components/schemas/JobTypeEmun'
+        salary:
+          type: array
+          items:
+            type: number
+            minimum: 0
+            maxItems: 2
+            minItems: 2
+          example:
+            [60000,80000]
+        perks:
+          type: array
+          items:
+            type: string
+        extras:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - company
+        - location
+        - description
+        - type
+        - salary
+        - perks
+        - extras
+        - created_at
+        - updated_at
+
+    JobTypeEmun:
+      description: Available job types
+      type: string
+      enum:
+        - full-time
+        - part-time
+        - contract
+        - internship
+        - freelance
+    
+    JobPostPayload:
+      description: Schema for creating a new job posting
+      type: object
+      properties:
+        title:
+          type: string
+        company:
+          type: string
+        location:
+          type: string
+        description:
+          type: string
+        type:
+          $ref: '#/components/schemas/JobTypeEmun'
+        max_salary:
+          type: number
+        min_salary:
+          type: number
+        perks:
+          type: array
+          items:
+            type: string
+        extras:
+          type: string
+      required:
+        - title
+        - company
+        - location
+        - description
+        - type
+        - max_salary
+        - min_salary
