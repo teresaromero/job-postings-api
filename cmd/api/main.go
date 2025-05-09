@@ -4,6 +4,7 @@ import (
 	"job-postings-api/internal/handlers"
 	"job-postings-api/internal/models"
 	"job-postings-api/internal/repository"
+	"job-postings-api/internal/sorting"
 	"job-postings-api/internal/storage"
 	"log"
 	"net/http"
@@ -28,7 +29,8 @@ func main() {
 
 	// init storage, repository and handler
 	storage := storage.NewStorage()
-	repo := repository.NewRepository(storage)
+	sorter := &sorting.Sorter{}
+	repo := repository.NewRepository(storage, sorter)
 	handler := handlers.NewHandler(repo)
 
 	// router for v1

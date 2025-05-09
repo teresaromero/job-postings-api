@@ -130,8 +130,9 @@ func TestSortPosts(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SortPosts(tt.posts, tt.companyMap)
+			sorter := &Sorter{}
 
+			sorter.Sort(tt.posts, tt.companyMap)
 			assert.Equal(t, tt.want, tt.posts, "posts should be sorted correctly")
 		})
 	}
