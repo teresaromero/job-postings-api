@@ -6,8 +6,8 @@ import (
 
 type storageInterface interface {
 	GetPost(id string) (*models.Post, error)
-	CreatePost(post *models.PostCreateRequest) (*models.Post, error)
-	UpdatePost(id string, post *models.PostPutRequest) error
+	CreatePost(post *models.PostRequestPayload) (*models.Post, error)
+	UpdatePost(id string, post *models.PostRequestPayload) error
 	DeletePost(id string) error
 	ListPosts(filter models.ListRequestQueryParams) ([]*models.Post, error)
 }
@@ -26,11 +26,11 @@ func (r *Repository) GetPost(id string) (*models.Post, error) {
 	return r.storage.GetPost(id)
 }
 
-func (r *Repository) CreatePost(post *models.PostCreateRequest) (*models.Post, error) {
+func (r *Repository) CreatePost(post *models.PostRequestPayload) (*models.Post, error) {
 	return r.storage.CreatePost(post)
 }
 
-func (r *Repository) UpdatePost(id string, post *models.PostPutRequest) error {
+func (r *Repository) UpdatePost(id string, post *models.PostRequestPayload) error {
 	return r.storage.UpdatePost(id, post)
 }
 

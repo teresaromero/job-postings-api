@@ -80,20 +80,19 @@ func TestStorage_CreatePost(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		post    *models.PostCreateRequest
+		post    *models.PostRequestPayload
 		want    *models.Post
 		wantErr error
 	}{
 		{
 			name: "create valid post",
-			post: &models.PostCreateRequest{
+			post: &models.PostRequestPayload{
 				Title:       "Software Engineer",
 				Company:     "Test Company",
 				Description: "Test Description",
 				Type:        "Full-time",
 				Location:    "Remote",
-				MinSalary:   50000,
-				MaxSalary:   80000,
+				Salary:      []int{50000, 80000},
 				Perks:       []string{"Health Insurance"},
 				Extras:      "Flexible Hours",
 			},
@@ -118,7 +117,7 @@ func TestStorage_CreatePost(t *testing.T) {
 			assert.Equal(t, tt.post.Description, got.Description)
 			assert.Equal(t, tt.post.Type, got.Type)
 			assert.Equal(t, tt.post.Location, got.Location)
-			assert.Equal(t, []int{tt.post.MinSalary, tt.post.MaxSalary}, got.Salary)
+			assert.Equal(t, tt.post.Salary, got.Salary)
 			assert.Equal(t, tt.post.Perks, got.Perks)
 			assert.Equal(t, tt.post.Extras, got.Extras)
 			assert.NotZero(t, got.CreatedAt)
@@ -151,13 +150,13 @@ func TestStorage_UpdatePost(t *testing.T) {
 	tests := []struct {
 		name    string
 		id      string
-		post    *models.PostPutRequest
+		post    *models.PostRequestPayload
 		wantErr error
 	}{
 		{
 			name: "update existing post",
 			id:   "1",
-			post: &models.PostPutRequest{
+			post: &models.PostRequestPayload{
 				Title:       "Updated Title",
 				Company:     "Updated Company",
 				Description: "Updated Description",
@@ -172,7 +171,7 @@ func TestStorage_UpdatePost(t *testing.T) {
 		{
 			name: "update non-existing post",
 			id:   "999",
-			post: &models.PostPutRequest{
+			post: &models.PostRequestPayload{
 				Title: "Test",
 			},
 			wantErr: errors.ErrNotFound,
@@ -384,14 +383,13 @@ func Test_StorageIntegration(t *testing.T) {
 	s := NewStorage(sorter)
 
 	// Create a new post
-	post := &models.PostCreateRequest{
+	post := &models.PostRequestPayload{
 		Title:       "Software Engineer",
 		Company:     "Tech Company",
 		Description: "Develop software solutions.",
 		Type:        "Full-time",
 		Location:    "Remote",
-		MinSalary:   70000,
-		MaxSalary:   120000,
+		Salary:      []int{70000, 120000},
 		Perks:       []string{"Health Insurance", "401k"},
 		Extras:      "Flexible Hours",
 	}
@@ -406,7 +404,7 @@ func Test_StorageIntegration(t *testing.T) {
 	assert.Equal(t, newPost.ID, gotPost.ID)
 
 	// Update the post
-	updateRequest := &models.PostPutRequest{
+	updateRequest := &models.PostRequestPayload{
 		Company:     "Tech Company",
 		Perks:       []string{"Health Insurance", "401k"},
 		Extras:      "Flexible Hours",

@@ -1,23 +1,11 @@
 package models
 
-type PostCreateRequest struct {
+type PostRequestPayload struct {
 	Title       string   `json:"title" binding:"required"`
 	Company     string   `json:"company" binding:"required"`
 	Location    string   `json:"location" binding:"required"`
 	Description string   `json:"description" binding:"required"`
 	Type        JobType  `json:"type" binding:"required,jobtype"`
-	MaxSalary   int      `json:"max_salary" binding:"required,gt=0"`
-	MinSalary   int      `json:"min_salary" binding:"required,gt=0"`
-	Perks       []string `json:"perks"`
-	Extras      string   `json:"extras"`
-}
-
-type PostPutRequest struct {
-	Title       string   `json:"title"`
-	Company     string   `json:"company"`
-	Location    string   `json:"location"`
-	Description string   `json:"description"`
-	Type        JobType  `json:"type" binding:"omitempty,jobtype"`
 	Salary      []int    `json:"salary" binding:"omitempty,dive,gt=0"`
 	Perks       []string `json:"perks"`
 	Extras      string   `json:"extras"`

@@ -37,7 +37,7 @@ func (m *MockRepository) GetPost(id string) (*models.Post, error) {
 	return args.Get(0).(*models.Post), args.Error(1)
 }
 
-func (m *MockRepository) CreatePost(post *models.PostCreateRequest) (*models.Post, error) {
+func (m *MockRepository) CreatePost(post *models.PostRequestPayload) (*models.Post, error) {
 	args := m.Called(post)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -46,7 +46,7 @@ func (m *MockRepository) CreatePost(post *models.PostCreateRequest) (*models.Pos
 	return args.Get(0).(*models.Post), args.Error(1)
 }
 
-func (m *MockRepository) UpdatePost(id string, post *models.PostPutRequest) error {
+func (m *MockRepository) UpdatePost(id string, post *models.PostRequestPayload) error {
 	args := m.Called(id, post)
 	if args.Get(0) == nil {
 		return nil
@@ -436,7 +436,7 @@ func TestHandler_CreatePost(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := new(MockRepository)
 			if tt.mockResponse != nil || tt.mockError != nil {
-				mockRepo.On("CreatePost", mock.AnythingOfType("*models.PostCreateRequest")).Return(tt.mockResponse, tt.mockError)
+				mockRepo.On("CreatePost", mock.AnythingOfType("*models.PostRequestPayload")).Return(tt.mockResponse, tt.mockError)
 			}
 
 			handler := NewHandler(mockRepo)
@@ -488,8 +488,7 @@ func TestHandler_UpdatePost(t *testing.T) {
 				"location":    "Updated Location",
 				"extras":      "Updated Extras",
 				"perks":       []string{"perk1", "perk2"},
-				"min_salary":  50000,
-				"max_salary":  70000,
+				"salary":      []int{50000, 70000},
 			},
 			mockError:      nil,
 			expectedStatus: http.StatusNoContent,
@@ -517,7 +516,14 @@ func TestHandler_UpdatePost(t *testing.T) {
 			name: "not found",
 			id:   "999",
 			requestBody: map[string]interface{}{
-				"title": "Updated Post",
+				"title":       "Updated Post",
+				"description": "Updated Description",
+				"type":        "full-time",
+				"company":     "Updated Company",
+				"location":    "Updated Location",
+				"extras":      "Updated Extras",
+				"perks":       []string{"perk1", "perk2"},
+				"salary":      []int{50000, 70000},
 			},
 			mockError:      errors.ErrNotFound,
 			expectedStatus: http.StatusNotFound,
@@ -527,7 +533,14 @@ func TestHandler_UpdatePost(t *testing.T) {
 			name: "repository error",
 			id:   "1",
 			requestBody: map[string]interface{}{
-				"title": "Updated Post",
+				"title":       "Updated Post",
+				"description": "Updated Description",
+				"type":        "full-time",
+				"company":     "Updated Company",
+				"location":    "Updated Location",
+				"extras":      "Updated Extras",
+				"perks":       []string{"perk1", "perk2"},
+				"salary":      []int{50000, 70000},
 			},
 			mockError:      assert.AnError,
 			expectedStatus: http.StatusInternalServerError,
@@ -539,7 +552,7 @@ func TestHandler_UpdatePost(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := new(MockRepository)
 			if tt.id != "" && tt.expectedStatus != http.StatusBadRequest {
-				mockRepo.On("UpdatePost", tt.id, mock.AnythingOfType("*models.PostPutRequest")).Return(tt.mockError)
+				mockRepo.On("UpdatePost", tt.id, mock.AnythingOfType("*models.PostRequestPayload")).Return(tt.mockError)
 			}
 
 			handler := NewHandler(mockRepo)

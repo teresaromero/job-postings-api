@@ -10,8 +10,8 @@ import (
 
 type repositoryInterface interface {
 	GetPost(id string) (*models.Post, error)
-	CreatePost(post *models.PostCreateRequest) (*models.Post, error)
-	UpdatePost(id string, post *models.PostPutRequest) error
+	CreatePost(post *models.PostRequestPayload) (*models.Post, error)
+	UpdatePost(id string, post *models.PostRequestPayload) error
 	DeletePost(id string) error
 	ListPosts(filter models.ListRequestQueryParams) (*models.PostList, error)
 }
@@ -65,7 +65,7 @@ func (h *Handler) GetPost(c *gin.Context) {
 }
 
 func (h *Handler) CreatePost(c *gin.Context) {
-	post := &models.PostCreateRequest{}
+	post := &models.PostRequestPayload{}
 	if err := c.ShouldBindJSON(post); err != nil {
 		// TODO: improve feedback for invalid request
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
@@ -89,7 +89,7 @@ func (h *Handler) UpdatePost(c *gin.Context) {
 		return
 	}
 
-	post := &models.PostPutRequest{}
+	post := &models.PostRequestPayload{}
 	if err := c.ShouldBindJSON(post); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return

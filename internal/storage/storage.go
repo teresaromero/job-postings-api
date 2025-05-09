@@ -37,7 +37,7 @@ func (s *Storage) GetPost(id string) (*models.Post, error) {
 	return &item, nil
 }
 
-func (s *Storage) CreatePost(post *models.PostCreateRequest) (*models.Post, error) {
+func (s *Storage) CreatePost(post *models.PostRequestPayload) (*models.Post, error) {
 	p := models.Post{
 		ID:          fmt.Sprintf("%v", uuid.New().ID()),
 		Title:       post.Title,
@@ -45,7 +45,7 @@ func (s *Storage) CreatePost(post *models.PostCreateRequest) (*models.Post, erro
 		Description: post.Description,
 		Type:        post.Type,
 		Location:    post.Location,
-		Salary:      []int{post.MinSalary, post.MaxSalary},
+		Salary:      post.Salary,
 		Perks:       post.Perks,
 		Extras:      post.Extras,
 		CreatedAt:   time.Now(),
@@ -58,7 +58,7 @@ func (s *Storage) CreatePost(post *models.PostCreateRequest) (*models.Post, erro
 
 }
 
-func (s *Storage) UpdatePost(id string, post *models.PostPutRequest) error {
+func (s *Storage) UpdatePost(id string, post *models.PostRequestPayload) error {
 	item, ok := s.postMap[id]
 	if !ok {
 		return fmt.Errorf("%w: post not found", errors.ErrNotFound)
