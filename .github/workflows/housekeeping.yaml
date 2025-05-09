@@ -1,0 +1,27 @@
+name: Housekeeping
+on:
+  push:
+jobs:
+  lint-test-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.24.2"
+
+      - run: |-
+          go mod tidy
+          go mod download
+
+      - name: Lint
+        run: make lint
+      
+      - name: Unit tests
+        run: make test
+
+      - name: Build binary
+        run: make build

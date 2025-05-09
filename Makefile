@@ -26,3 +26,7 @@ clean:
 test:
 	@echo "Testing..."
 	go test ./...
+
+lint:
+	@echo "Linting..."
+	go vet ./...
