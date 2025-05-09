@@ -18,8 +18,7 @@ type PostPutRequest struct {
 	Location    string   `json:"location"`
 	Description string   `json:"description"`
 	Type        JobType  `json:"type" binding:"omitempty,jobtype"`
-	MaxSalary   int      `json:"max_salary" binding:"omitempty,gt=0"`
-	MinSalary   int      `json:"min_salary" binding:"omitempty,gt=0"`
+	Salary      []int    `json:"salary" binding:"omitempty,dive,gt=0"`
 	Perks       []string `json:"perks"`
 	Extras      string   `json:"extras"`
 }

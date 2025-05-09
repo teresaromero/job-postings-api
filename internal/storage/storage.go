@@ -69,7 +69,7 @@ func (s *Storage) UpdatePost(id string, post *models.PostPutRequest) error {
 	item.Description = post.Description
 	item.Type = post.Type
 	item.Location = post.Location
-	item.Salary = []int{post.MinSalary, post.MaxSalary}
+	item.Salary = post.Salary
 	item.Perks = post.Perks
 	item.Extras = post.Extras
 	item.UpdatedAt = time.Now()

@@ -163,8 +163,7 @@ func TestStorage_UpdatePost(t *testing.T) {
 				Description: "Updated Description",
 				Type:        "Part-time",
 				Location:    "On-site",
-				MinSalary:   60000,
-				MaxSalary:   90000,
+				Salary:      []int{60000, 90000},
 				Perks:       []string{"Health Insurance", "401k"},
 				Extras:      "Updated Extras",
 			},
@@ -196,7 +195,7 @@ func TestStorage_UpdatePost(t *testing.T) {
 			assert.Equal(t, tt.post.Description, updatedPost.Description)
 			assert.Equal(t, tt.post.Type, updatedPost.Type)
 			assert.Equal(t, tt.post.Location, updatedPost.Location)
-			assert.Equal(t, []int{tt.post.MinSalary, tt.post.MaxSalary}, updatedPost.Salary)
+			assert.Equal(t, tt.post.Salary, updatedPost.Salary)
 			assert.Equal(t, tt.post.Perks, updatedPost.Perks)
 			assert.Equal(t, tt.post.Extras, updatedPost.Extras)
 			assert.NotEqual(t, testPost.UpdatedAt, updatedPost.UpdatedAt)
@@ -415,8 +414,7 @@ func Test_StorageIntegration(t *testing.T) {
 		Description: "Lead software development projects.",
 		Type:        "Full-time",
 		Location:    "Remote",
-		MinSalary:   80000,
-		MaxSalary:   130000,
+		Salary:      []int{80000, 130000},
 	}
 	err = s.UpdatePost(newPost.ID, updateRequest)
 	assert.NoError(t, err)
