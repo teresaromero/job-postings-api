@@ -6,33 +6,32 @@ import (
 )
 
 type Sorter struct {
-	rules map[int]func(input *models.SortInput)
+	order []string
+	rules map[string]func(input *models.SortInput)
 }
 
-func NewSorter() *Sorter {
+func NewSorter(order []string) *Sorter {
+	defaultOrder := []string{"0", "1", "2"}
+	if len(order) == 0 {
+		order = defaultOrder
+	}
+
 	return &Sorter{
+		order: order,
 		// define sorting rules with initial order of priority
-		// 1. Posts created in the last 7 days rank first above older posts
-		// 2. Posts with higher salaries rank first above posts with lower salaries
-		// 3. Posts made by companies with more open job posts rank first than those for companies with less posts
-		rules: map[int]func(input *models.SortInput){
-			0: sortByCompanyPostsCount,
-			1: sortByHighSalary,
-			2: sortByLastSevenDays,
+		// 2. Posts created in the last 7 days rank first above older posts
+		// 1. Posts with higher salaries rank first above posts with lower salaries
+		// 0. Posts made by companies with more open job posts rank first than those for companies with less posts
+		rules: map[string]func(input *models.SortInput){
+			"0": sortByCompanyPostsCount,
+			"1": sortByHighSalary,
+			"2": sortByLastSevenDays,
 		},
 	}
 }
 
-func (s *Sorter) Sort(input *models.SortInput, order []int) {
-	// order represents the priority of the sorting rules indexes
-	// 0: sort by company posts count
-	// 1: sort by high salary
-	// 2: sort by last seven days
-	defaultOrder := []int{0, 1, 2}
-	if len(order) == 0 {
-		order = defaultOrder
-	}
-	for idx := range order {
+func (s *Sorter) Sort(input *models.SortInput) {
+	for _, idx := range s.order {
 		s.rules[idx](input)
 	}
 }

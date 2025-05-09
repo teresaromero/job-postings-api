@@ -1,6 +1,7 @@
 package main
 
 import (
+	"job-postings-api/internal/config"
 	"job-postings-api/internal/handlers"
 	"job-postings-api/internal/models"
 	"job-postings-api/internal/repository"
@@ -15,6 +16,9 @@ import (
 )
 
 func main() {
+
+	cfg := config.Load()
+
 	engine := gin.New()
 	engine.SetTrustedProxies(nil)
 
@@ -29,7 +33,7 @@ func main() {
 
 	// init storage, repository and handler
 	storage := storage.NewStorage()
-	sorter := sorting.NewSorter()
+	sorter := sorting.NewSorter(cfg.SortRulesOrder)
 	repo := repository.NewRepository(storage, sorter)
 	handler := handlers.NewHandler(repo)
 
