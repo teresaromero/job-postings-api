@@ -62,18 +62,42 @@ func Test_isAllowedByFilter(t *testing.T) {
 			want: true,
 		},
 		{
-			name: "match max salary",
-			job:  testJob,
+			name: "no match max salary with salary range",
+			job: models.Post{
+				Salary: []int{50000, 70000},
+			},
+			filter: models.ListRequestQueryParams{
+				MaxSalary: 7000,
+			},
+			want: false,
+		},
+		{
+			name: "match max salary with salary range",
+			job: models.Post{
+				Salary: []int{50000, 70000},
+			},
 			filter: models.ListRequestQueryParams{
 				MaxSalary: 60000,
 			},
 			want: true,
 		},
 		{
-			name: "match min salary",
-			job:  testJob,
+			name: "no match min salary with salary range",
+			job: models.Post{
+				Salary: []int{50000, 70000},
+			},
 			filter: models.ListRequestQueryParams{
-				MinSalary: 70000,
+				MinSalary: 80000,
+			},
+			want: false,
+		},
+		{
+			name: "match min salary with salary range",
+			job: models.Post{
+				Salary: []int{50000, 70000},
+			},
+			filter: models.ListRequestQueryParams{
+				MinSalary: 60000,
 			},
 			want: true,
 		},

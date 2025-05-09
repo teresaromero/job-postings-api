@@ -63,14 +63,6 @@ func sortByLastSevenDays(input *models.SortInput) {
 		if !a.CreatedAtLastSevenDays() && !b.CreatedAtLastSevenDays() {
 			return 0
 		}
-		// if a is created in the last 7 days and b is not, a ranks first
-		if a.CreatedAtLastSevenDays() && !b.CreatedAtLastSevenDays() {
-			return -1
-		}
-		// if b is created in the last 7 days and a is not, b ranks first
-		if !a.CreatedAtLastSevenDays() && b.CreatedAtLastSevenDays() {
-			return 1
-		}
 
 		// if both are created out of the  days, sort by created at date
 		if a.CreatedAt != b.CreatedAt {

@@ -36,20 +36,20 @@ func TestSortPosts(t *testing.T) {
 			},
 		},
 		{
-			name: "sorts by recent first posts count",
+			name: "sorts by recent first",
 			posts: []*models.Post{
 				{Company: "A", Salary: []int{50000, 60000}, CreatedAt: now.Add(-8 * 24 * time.Hour)},
-				{Company: "A", Salary: []int{50000, 60000}, CreatedAt: now.Add(-2 * time.Hour)},
-				{Company: "A", Salary: []int{50000, 60000}, CreatedAt: now},
+				{Company: "B", Salary: []int{50000, 60000}, CreatedAt: now.Add(-2 * time.Hour)},
+				{Company: "C", Salary: []int{50000, 60000}, CreatedAt: now},
 			},
 			companyMap: map[string]int{
 				"A": 1,
-				"B": 3,
-				"C": 2,
+				"B": 1,
+				"C": 1,
 			},
 			want: []*models.Post{
-				{Company: "A", Salary: []int{50000, 60000}, CreatedAt: now},
-				{Company: "A", Salary: []int{50000, 60000}, CreatedAt: now.Add(-2 * time.Hour)},
+				{Company: "C", Salary: []int{50000, 60000}, CreatedAt: now},
+				{Company: "B", Salary: []int{50000, 60000}, CreatedAt: now.Add(-2 * time.Hour)},
 				{Company: "A", Salary: []int{50000, 60000}, CreatedAt: now.Add(-8 * 24 * time.Hour)}},
 		},
 		{
