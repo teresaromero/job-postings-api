@@ -31,9 +31,3 @@ type ListRequestQueryParams struct {
 	MinSalary int    `form:"min_salary"`
 	Company   string `form:"company"`
 }
-
-type PostOrderBy struct {
-	CreatedAt    string `json:"created_at"`
-	Salary       string `json:"salary"`
-	CompanyCount int    `json:"company_count"`
-}
