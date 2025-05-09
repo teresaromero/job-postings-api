@@ -21,7 +21,7 @@ type MockRepository struct {
 	mock.Mock
 }
 
-func (m *MockRepository) ListPosts(filter *models.ListRequestQueryParams) (*models.PostList, error) {
+func (m *MockRepository) ListPosts(filter models.ListRequestQueryParams) (*models.PostList, error) {
 	args := m.Called(filter)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -170,7 +170,7 @@ func TestHandler_ListPosts(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := new(MockRepository)
-			mockRepo.On("ListPosts", &tt.expectedFilter).Return(tt.mockResponse, tt.mockError)
+			mockRepo.On("ListPosts", tt.expectedFilter).Return(tt.mockResponse, tt.mockError)
 
 			handler := NewHandler(mockRepo)
 			w := httptest.NewRecorder()

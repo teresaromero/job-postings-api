@@ -9,7 +9,7 @@ type storageInterface interface {
 	CreatePost(post *models.PostCreateRequest) (*models.Post, error)
 	UpdatePost(id string, post *models.PostPutRequest) error
 	DeletePost(id string) error
-	ListPosts(filter *models.ListRequestQueryParams) ([]*models.Post, error)
+	ListPosts(filter models.ListRequestQueryParams) ([]*models.Post, error)
 }
 
 type Repository struct {
@@ -38,7 +38,7 @@ func (r *Repository) DeletePost(id string) error {
 	return r.storage.DeletePost(id)
 }
 
-func (r *Repository) ListPosts(filter *models.ListRequestQueryParams) (*models.PostList, error) {
+func (r *Repository) ListPosts(filter models.ListRequestQueryParams) (*models.PostList, error) {
 	posts, err := r.storage.ListPosts(filter)
 	if err != nil {
 		return nil, err
