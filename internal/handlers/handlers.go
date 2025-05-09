@@ -61,6 +61,7 @@ func (h *Handler) GetPost(c *gin.Context) {
 func (h *Handler) CreatePost(c *gin.Context) {
 	post := &models.PostCreateRequest{}
 	if err := c.ShouldBindJSON(post); err != nil {
+		// TODO: improve feedback for invalid request
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
 		return
 	}
@@ -98,7 +99,7 @@ func (h *Handler) UpdatePost(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusNoContent)
+	c.JSON(http.StatusNoContent, nil)
 }
 
 func (h *Handler) DeletePost(c *gin.Context) {
