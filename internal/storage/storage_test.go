@@ -336,34 +336,13 @@ func TestStorage_CompanyCount(t *testing.T) {
 	s.postMap[post3.ID] = post3
 	s.companyIndex[post3.Company]++
 
-	tests := []struct {
-		name    string
-		company string
-		want    int
-	}{
-		{
-			name:    "company with multiple posts",
-			company: "Company A",
-			want:    2,
-		},
-		{
-			name:    "company with single post",
-			company: "Company B",
-			want:    1,
-		},
-		{
-			name:    "non-existing company",
-			company: "Company C",
-			want:    0,
-		},
-	}
+	got := s.CompanyMapCount()
+	assert.Contains(t, got, "Company A")
+	assert.Equal(t, 2, got["Company A"])
+	assert.Contains(t, got, "Company B")
+	assert.Equal(t, 1, got["Company B"])
+	assert.Len(t, got, 2)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := s.CompanyCount(tt.company)
-			assert.Equal(t, tt.want, got)
-		})
-	}
 }
 func TestNewStorage(t *testing.T) {
 	s := NewStorage()
@@ -394,8 +373,8 @@ func Test_StorageIntegration(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, newPost)
 
-	count := s.CompanyCount(newPost.Company)
-	assert.Equal(t, 1, count)
+	cmap := s.CompanyMapCount()
+	assert.Len(t, cmap, 1)
 
 	// Get the created post
 	gotPost, err := s.GetPost(newPost.ID)
@@ -434,8 +413,8 @@ func Test_StorageIntegration(t *testing.T) {
 	err = s.DeletePost(newPost.ID)
 	assert.NoError(t, err)
 
-	count = s.CompanyCount(newPost.Company)
-	assert.Equal(t, 0, count)
+	cmap = s.CompanyMapCount()
+	assert.Len(t, cmap, 0)
 
 	gotDeletedPost, err := s.GetPost(newPost.ID)
 	assert.ErrorIs(t, err, errors.ErrNotFound)

@@ -102,12 +102,7 @@ func (s *Storage) ListPosts(filter models.ListRequestQueryParams) ([]*models.Pos
 	return list, nil
 }
 
-// CompanyCount returns the number of job posts for a given company
-// It returns 0 if the company does not exist in the index
-func (s *Storage) CompanyCount(company string) int {
-	count, ok := s.companyIndex[company]
-	if !ok {
-		return 0
-	}
-	return count
+// CompanyMapCount returns a map of company names to the number of job postings
+func (s *Storage) CompanyMapCount() map[string]int {
+	return s.companyIndex
 }
