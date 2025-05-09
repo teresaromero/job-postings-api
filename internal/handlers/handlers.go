@@ -13,7 +13,7 @@ type repositoryInterface interface {
 	CreatePost(post *models.PostCreateRequest) (*models.Post, error)
 	UpdatePost(id string, post *models.PostPutRequest) error
 	DeletePost(id string) error
-	ListPosts() (*models.PostList, error)
+	ListPosts(filter *models.ListRequestQueryParams) (*models.PostList, error)
 }
 
 type Handler struct {
@@ -28,7 +28,13 @@ func NewHandler(repo repositoryInterface) *Handler {
 }
 
 func (h *Handler) ListPosts(c *gin.Context) {
-	posts, err := h.repo.ListPosts()
+	var filter models.ListRequestQueryParams
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "invalid request"})
+		return
+	}
+
+	posts, err := h.repo.ListPosts(&filter)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "failed to list posts"})
 		return

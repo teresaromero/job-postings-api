@@ -21,8 +21,8 @@ type MockRepository struct {
 	mock.Mock
 }
 
-func (m *MockRepository) ListPosts() (*models.PostList, error) {
-	args := m.Called()
+func (m *MockRepository) ListPosts(filter *models.ListRequestQueryParams) (*models.PostList, error) {
+	args := m.Called(filter)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
@@ -69,8 +69,10 @@ func TestHandler_ListPosts(t *testing.T) {
 		name           string
 		mockResponse   *models.PostList
 		mockError      error
+		mockRawQuery   string
 		expectedStatus int
 		expectedBody   map[string]interface{}
+		expectedFilter models.ListRequestQueryParams
 	}{
 		{
 			name: "success",
@@ -108,6 +110,7 @@ func TestHandler_ListPosts(t *testing.T) {
 				},
 				"count": float64(1),
 			},
+			expectedFilter: models.ListRequestQueryParams{},
 		},
 		{
 			name:           "repository error",
@@ -115,18 +118,65 @@ func TestHandler_ListPosts(t *testing.T) {
 			mockError:      assert.AnError,
 			expectedStatus: http.StatusInternalServerError,
 			expectedBody:   map[string]interface{}{"error": "failed to list posts"},
+			expectedFilter: models.ListRequestQueryParams{},
+		},
+		{
+			name:         "success with filter",
+			mockRawQuery: `title="test post"&location=remote&company=example&max_salary=100000&min_salary=50000`,
+			mockResponse: &models.PostList{
+				Posts: []*models.Post{
+					{
+						ID:        "1",
+						Title:     "Test Post",
+						Type:      "full-time",
+						Perks:     []string{},
+						Salary:    []int{},
+						CreatedAt: time.Date(2023, 10, 1, 0, 0, 0, 0, time.UTC),
+						UpdatedAt: time.Date(2023, 10, 1, 0, 0, 0, 0, time.UTC),
+					},
+				},
+				Count: 1,
+			},
+			mockError:      nil,
+			expectedStatus: http.StatusOK,
+			expectedFilter: models.ListRequestQueryParams{
+				Title:     "\"test post\"",
+				Location:  "remote",
+				Company:   "example",
+				MaxSalary: 100000,
+				MinSalary: 50000,
+			},
+			expectedBody: map[string]interface{}{
+				"posts": []interface{}{
+					map[string]interface{}{
+						"id":          "1",
+						"title":       "Test Post",
+						"description": "",
+						"extras":      "",
+						"created_at":  "2023-10-01T00:00:00Z",
+						"updated_at":  "2023-10-01T00:00:00Z",
+						"company":     "",
+						"location":    "",
+						"perks":       []interface{}{},
+						"salary":      []interface{}{},
+						"type":        "full-time",
+					},
+				},
+				"count": float64(1),
+			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mockRepo := new(MockRepository)
-			mockRepo.On("ListPosts").Return(tt.mockResponse, tt.mockError)
+			mockRepo.On("ListPosts", &tt.expectedFilter).Return(tt.mockResponse, tt.mockError)
 
 			handler := NewHandler(mockRepo)
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 			c.Request = httptest.NewRequest("GET", "/posts", nil)
+			c.Request.URL.RawQuery = tt.mockRawQuery
 
 			handler.ListPosts(c)
 

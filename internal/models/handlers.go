@@ -29,6 +29,7 @@ type ListRequestQueryParams struct {
 	Location  string `form:"location"`
 	MaxSalary int    `form:"max_salary"`
 	MinSalary int    `form:"min_salary"`
+	Company   string `form:"company"`
 }
 
 type PostOrderBy struct {
