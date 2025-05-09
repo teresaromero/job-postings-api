@@ -23,20 +23,6 @@ clean:
 	go clean
 	rm -f $(BINARY_NAME)
 
-debug:
-	@echo "Debugging..."
-	dlv debug $(MAIN_FILE)
-
 test:
 	@echo "Testing..."
 	go test ./...
-
-.PHONY: help
-help:
-	@echo "Make commands:"
-	@echo "build - Build the binary"
-	@echo "run   - Run the application"
-	@echo "clean - Remove binary and cache"
-	@echo "debug - Debug using Delve"
-	@echo "test  - Run tests"
-	@echo "dev   - Run with live reload (requires air)"
