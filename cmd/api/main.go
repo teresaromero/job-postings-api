@@ -29,7 +29,7 @@ func main() {
 
 	// init storage, repository and handler
 	storage := storage.NewStorage()
-	sorter := &sorting.Sorter{}
+	sorter := sorting.NewSorter()
 	repo := repository.NewRepository(storage, sorter)
 	handler := handlers.NewHandler(repo)
 

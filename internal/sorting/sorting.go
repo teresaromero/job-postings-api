@@ -5,31 +5,48 @@ import (
 	"slices"
 )
 
-type Sorter struct{}
-
-// SortPosts sorts the posts by the following rules:
-// 1. Posts created in the last 7 days rank first above older posts
-// 2. Posts with higher salaries rank first above posts with lower salaries
-// 3. Posts made by companies with more open job posts rank first than those for companies with less posts
-func (s *Sorter) Sort(posts []*models.Post, companyMap map[string]int) {
-	s.sortByCompanyPostsCount(posts, companyMap)
-	s.sortByHighSalary(posts)
-	s.sortByLastSevenDays(posts)
+type Sorter struct {
+	rules map[int]func(input *models.SortInput)
 }
 
-func (s *Sorter) sortByCompanyPostsCount(posts []*models.Post, companyMap map[string]int) {
+func NewSorter() *Sorter {
+	return &Sorter{
+		// define sorting rules with initial order of priority
+		// 1. Posts created in the last 7 days rank first above older posts
+		// 2. Posts with higher salaries rank first above posts with lower salaries
+		// 3. Posts made by companies with more open job posts rank first than those for companies with less posts
+		rules: map[int]func(input *models.SortInput){
+			0: sortByCompanyPostsCount,
+			1: sortByHighSalary,
+			2: sortByLastSevenDays,
+		},
+	}
+}
+
+func (s *Sorter) Sort(input *models.SortInput) {
+	// order represents the priority of the sorting rules indexes
+	// 0: sort by company posts count
+	// 1: sort by high salary
+	// 2: sort by last seven days
+	defaultOrder := []int{0, 1, 2}
+	for idx := range defaultOrder {
+		s.rules[idx](input)
+	}
+}
+
+func sortByCompanyPostsCount(input *models.SortInput) {
 	// sort by companies with more open job posts first
-	slices.SortFunc(posts, func(a, b *models.Post) int {
-		if companyMap[a.Company] != companyMap[b.Company] {
-			return companyMap[b.Company] - companyMap[a.Company]
+	slices.SortFunc(input.Posts, func(a, b *models.Post) int {
+		if input.CompanyMap[a.Company] != input.CompanyMap[b.Company] {
+			return input.CompanyMap[b.Company] - input.CompanyMap[a.Company]
 		}
 		return 0
 	})
 }
 
-func (s *Sorter) sortByHighSalary(posts []*models.Post) {
+func sortByHighSalary(input *models.SortInput) {
 	// sort by the salary first, highter salary first
-	slices.SortFunc(posts, func(a, b *models.Post) int {
+	slices.SortFunc(input.Posts, func(a, b *models.Post) int {
 		if a.Salary[1] != b.Salary[1] {
 			return b.Salary[1] - a.Salary[1]
 		}
@@ -37,9 +54,9 @@ func (s *Sorter) sortByHighSalary(posts []*models.Post) {
 	})
 }
 
-func (s *Sorter) sortByLastSevenDays(posts []*models.Post) {
+func sortByLastSevenDays(input *models.SortInput) {
 	// sort by the created at date, newer posts first
-	slices.SortFunc(posts, func(a, b *models.Post) int {
+	slices.SortFunc(input.Posts, func(a, b *models.Post) int {
 		// if is not created in the last 7 days, keep the order
 		if !a.CreatedAtLastSevenDays() && !b.CreatedAtLastSevenDays() {
 			return 0

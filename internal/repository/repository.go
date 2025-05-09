@@ -14,7 +14,7 @@ type storageInterface interface {
 }
 
 type sorterInterface interface {
-	Sort(posts []*models.Post, companyMap map[string]int)
+	Sort(input *models.SortInput)
 }
 
 type Repository struct {
@@ -51,8 +51,11 @@ func (r *Repository) ListPosts(filter models.ListRequestQueryParams) (*models.Po
 		return nil, err
 	}
 	companyMap := r.storage.CompanyMapCount()
-
-	r.sorter.Sort(posts, companyMap)
+	input := &models.SortInput{
+		Posts:      posts,
+		CompanyMap: companyMap,
+	}
+	r.sorter.Sort(input)
 
 	return &models.PostList{
 		Posts: posts,
