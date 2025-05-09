@@ -1,0 +1,32 @@
+meta {
+  name: Create Post
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseURL}}/api/v1/posts
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Test Post",
+    "description": "Test Description",
+    "extras": "Test Extras",
+    "company": "Test Company",
+    "location": "Test Location",
+    "perks": [
+      "perk1",
+      "perk2"
+    ],
+    "min_salary": 30000,
+    "max_salary": 50000,
+    "type": "full-time"
+  }
+}
+
+body:multipart-form {
+  hola: ivalid
+}

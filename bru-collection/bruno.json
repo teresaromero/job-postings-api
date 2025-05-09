@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Job Postings",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
