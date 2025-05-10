@@ -36,9 +36,13 @@ func main() {
 	sorter := sorting.NewSorter(cfg.SortRulesOrder)
 	storage := storage.NewStorage(sorter)
 
-	if err := storage.Seed(); err != nil {
-		log.Fatalf("failed to seed storage: %v", err)
+	if cfg.SeedData {
+		log.Println("seeding storage with test data")
+		if err := storage.Seed(); err != nil {
+			log.Fatalf("failed to seed storage: %v", err)
+		}
 	}
+	
 	repo := repository.NewRepository(storage)
 	handler := handlers.NewHandler(repo, cfg.JwtSecret)
 

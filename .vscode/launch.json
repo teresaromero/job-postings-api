@@ -11,6 +11,10 @@
             "mode": "auto",
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/cmd/api/main.go",
+            "env": {
+                "JWT_SECRET": "randomsecret",
+                "SEED_DATA": "true",
+            }
         }
     ]
 }
