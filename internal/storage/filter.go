@@ -18,16 +18,12 @@ func isAllowedByFilter(job models.Post, filter models.ListRequestQueryParams) bo
 		return false
 	}
 	if filter.MaxSalary != 0 &&
-		// 50000, 70000
-		// max 7000
-		filter.MaxSalary < job.Salary[0] &&
-		filter.MaxSalary < job.Salary[1] {
+		job.Salary[1] > filter.MaxSalary {
 		return false
 	}
-	// reject when min salary is set
-	// and the job salary is not in the range
 	if filter.MinSalary != 0 &&
-		filter.MinSalary > job.Salary[1] {
+		job.Salary[0] < filter.MinSalary &&
+		job.Salary[1] < filter.MinSalary {
 		return false
 	}
 	return true

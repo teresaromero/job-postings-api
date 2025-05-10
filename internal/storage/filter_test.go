@@ -77,7 +77,7 @@ func Test_isAllowedByFilter(t *testing.T) {
 				Salary: []int{50000, 70000},
 			},
 			filter: models.ListRequestQueryParams{
-				MaxSalary: 60000,
+				MaxSalary: 80000,
 			},
 			want: true,
 		},

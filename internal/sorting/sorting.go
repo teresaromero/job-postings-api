@@ -38,7 +38,7 @@ func (s *Sorter) Sort(input *models.SortInput) {
 
 func sortByCompanyPostsCount(input *models.SortInput) {
 	// sort by companies with more open job posts first
-	slices.SortFunc(input.Posts, func(a, b *models.Post) int {
+	slices.SortStableFunc(input.Posts, func(a, b *models.Post) int {
 		if input.CompanyMap[a.Company] != input.CompanyMap[b.Company] {
 			return input.CompanyMap[b.Company] - input.CompanyMap[a.Company]
 		}
@@ -48,17 +48,14 @@ func sortByCompanyPostsCount(input *models.SortInput) {
 
 func sortByHighSalary(input *models.SortInput) {
 	// sort by the salary first, highter salary first
-	slices.SortFunc(input.Posts, func(a, b *models.Post) int {
-		if a.Salary[1] != b.Salary[1] {
-			return b.Salary[1] - a.Salary[1]
-		}
-		return b.Salary[0] - a.Salary[0]
+	slices.SortStableFunc(input.Posts, func(a, b *models.Post) int {
+		return b.Salary[1] - a.Salary[1]
 	})
 }
 
 func sortByLastSevenDays(input *models.SortInput) {
 	// sort by the created at date, newer posts first
-	slices.SortFunc(input.Posts, func(a, b *models.Post) int {
+	slices.SortStableFunc(input.Posts, func(a, b *models.Post) int {
 		// if is not created in the last 7 days, keep the order
 		if !a.CreatedAtLastSevenDays() && !b.CreatedAtLastSevenDays() {
 			return 0
