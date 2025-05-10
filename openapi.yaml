@@ -48,6 +48,8 @@ paths:
     post:
       operationId: createJobPosting
       summary: Create a new job posting
+      security:
+        - BearerToken: []
       requestBody:
         required: true
         content:
@@ -70,7 +72,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/JobPosting'
-
   /api/v1/posts/{id}:
     get:
       operationId: getJobPosting
@@ -100,6 +101,8 @@ paths:
     put:
       operationId: updateJobPosting
       summary: Update a job posting
+      security:
+        - BearerToken: []
       parameters:
         - $ref: '#/components/parameters/JobIdParam'
       requestBody:
@@ -114,13 +117,49 @@ paths:
     delete:
       operationId: deleteJobPosting
       summary: Delete a job posting
+      security:
+        - BearerToken: []
       parameters:
         - $ref: '#/components/parameters/JobIdParam'
       responses:
         '204':
           description: Job posting deleted
-
+  /auth/token:
+    post:
+      operationId: getToken
+      summary: Get a token
+      description: Retrieve a token for authentication
+        This has not been implemented fully, only using the username as employee or employer will return a token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Token retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
 components:
+  securitySchemes:
+    BearerToken:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   parameters:
     JobIdParam:
       name: id
