@@ -1,0 +1,18 @@
+meta {
+  name: Get Token for employer
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseURL}}/auth/token
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "username": "employer",
+    "password": "12345"
+  }
+}

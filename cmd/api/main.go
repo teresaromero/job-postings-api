@@ -3,6 +3,7 @@ package main
 import (
 	"job-postings-api/internal/config"
 	"job-postings-api/internal/handlers"
+	"job-postings-api/internal/middleware"
 	"job-postings-api/internal/models"
 	"job-postings-api/internal/repository"
 	"job-postings-api/internal/sorting"
@@ -39,15 +40,31 @@ func main() {
 		log.Fatalf("failed to seed storage: %v", err)
 	}
 	repo := repository.NewRepository(storage)
-	handler := handlers.NewHandler(repo)
+	handler := handlers.NewHandler(repo, cfg.JwtSecret)
 
 	// router for v1
 	apiv1 := engine.Group("/api/v1")
 	apiv1.GET("/posts", handler.ListPosts)
 	apiv1.GET("/posts/:id", handler.GetPost)
-	apiv1.POST("/posts", handler.CreatePost)
-	apiv1.PUT("/posts/:id", handler.UpdatePost)
-	apiv1.DELETE("/posts/:id", handler.DeletePost)
+
+	// Only employer can create, update and delete posts
+	apiv1.POST("/posts",
+		middleware.Authenticated(cfg.JwtSecret),
+		middleware.Authorize(models.EmployerUserType.String()),
+		handler.CreatePost)
+
+	// TODO: implement ONLY the user that created the post can update or delete it
+	apiv1.PUT("/posts/:id",
+		middleware.Authenticated(cfg.JwtSecret),
+		middleware.Authorize(models.EmployerUserType.String()),
+		handler.UpdatePost)
+	apiv1.DELETE("/posts/:id",
+		middleware.Authenticated(cfg.JwtSecret),
+		middleware.Authorize(models.EmployerUserType.String()),
+		handler.DeletePost)
+
+	// router for auth
+	engine.POST("/auth/token", handler.GetToken)
 
 	// healthcheck
 	engine.GET("/ping", func(c *gin.Context) {

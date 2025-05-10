@@ -172,7 +172,7 @@ func TestHandler_ListPosts(t *testing.T) {
 			mockRepo := new(MockRepository)
 			mockRepo.On("ListPosts", tt.expectedFilter).Return(tt.mockResponse, tt.mockError)
 
-			handler := NewHandler(mockRepo)
+			handler := NewHandler(mockRepo, []byte("test-jwt"))
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 			c.Request = httptest.NewRequest("GET", "/posts", nil)
@@ -262,7 +262,7 @@ func TestHandler_GetPost(t *testing.T) {
 				mockRepo.On("GetPost", tt.id).Return(tt.mockResponse, tt.mockError)
 			}
 
-			handler := NewHandler(mockRepo)
+			handler := NewHandler(mockRepo, []byte("test-jwt"))
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 			c.Params = []gin.Param{{Key: "id", Value: tt.id}}
@@ -327,7 +327,7 @@ func TestHandler_DeletePost(t *testing.T) {
 				mockRepo.On("DeletePost", tt.id).Return(tt.mockError)
 			}
 
-			handler := NewHandler(mockRepo)
+			handler := NewHandler(mockRepo, []byte("test-jwt"))
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 			c.Params = []gin.Param{{Key: "id", Value: tt.id}}
@@ -439,7 +439,7 @@ func TestHandler_CreatePost(t *testing.T) {
 				mockRepo.On("CreatePost", mock.AnythingOfType("*models.PostRequestPayload")).Return(tt.mockResponse, tt.mockError)
 			}
 
-			handler := NewHandler(mockRepo)
+			handler := NewHandler(mockRepo, []byte("test-jwt"))
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 			// register a custom validator for jobtype enum values
@@ -555,7 +555,7 @@ func TestHandler_UpdatePost(t *testing.T) {
 				mockRepo.On("UpdatePost", tt.id, mock.AnythingOfType("*models.PostRequestPayload")).Return(tt.mockError)
 			}
 
-			handler := NewHandler(mockRepo)
+			handler := NewHandler(mockRepo, []byte("test-jwt"))
 			w := httptest.NewRecorder()
 			c, _ := gin.CreateTestContext(w)
 

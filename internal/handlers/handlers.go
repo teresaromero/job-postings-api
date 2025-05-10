@@ -4,8 +4,10 @@ import (
 	"job-postings-api/internal/errors"
 	"job-postings-api/internal/models"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type repositoryInterface interface {
@@ -19,11 +21,14 @@ type repositoryInterface interface {
 type Handler struct {
 	// bypassing the repository interface here although it should the service interface
 	repo repositoryInterface
+
+	jwtSecret []byte
 }
 
-func NewHandler(repo repositoryInterface) *Handler {
+func NewHandler(repo repositoryInterface, jwtSecret []byte) *Handler {
 	return &Handler{
-		repo: repo,
+		repo:      repo,
+		jwtSecret: jwtSecret,
 	}
 }
 
@@ -126,4 +131,33 @@ func (h *Handler) DeletePost(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusNoContent, nil)
+}
+
+func (h *Handler) GetToken(c *gin.Context) {
+	var creds *models.LoginRequestPayload
+	if err := c.ShouldBindJSON(&creds); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+		return
+	}
+
+	// Only allow login for specific usernames
+	// TODO: implement proper authentication
+	if creds.Username != models.EmployeeUserType.String() &&
+		creds.Username != models.EmployerUserType.String() {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"username": creds.Username,
+		"exp":      time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	tokenString, err := token.SignedString(h.jwtSecret)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"token": tokenString})
 }

@@ -18,3 +18,8 @@ type ListRequestQueryParams struct {
 	MinSalary int    `form:"min_salary"`
 	Company   string `form:"company"`
 }
+
+type LoginRequestPayload struct {
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
