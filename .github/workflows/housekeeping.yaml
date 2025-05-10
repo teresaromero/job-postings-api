@@ -25,3 +25,14 @@ jobs:
 
       - name: Build binary
         run: make build
+  
+  lint-openapi:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Vacuum
+        run: |
+          curl -fsSL https://quobix.com/scripts/install_vacuum.sh | sh
+          vacuum lint -dexq openapi.yaml  
