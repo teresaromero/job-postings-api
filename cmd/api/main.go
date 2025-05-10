@@ -34,6 +34,10 @@ func main() {
 	// init storage, repository and handler
 	sorter := sorting.NewSorter(cfg.SortRulesOrder)
 	storage := storage.NewStorage(sorter)
+
+	if err := storage.Seed(); err != nil {
+		log.Fatalf("failed to seed storage: %v", err)
+	}
 	repo := repository.NewRepository(storage)
 	handler := handlers.NewHandler(repo)
 
