@@ -5,18 +5,17 @@ meta {
 }
 
 get {
-  url: {{baseURL}}/api/v1/posts
+  url: {{baseURL}}/api/v1/posts?min_salary=10000&max_salary=35000
   body: none
   auth: inherit
 }
 
 params:query {
+  min_salary: 10000
+  max_salary: 35000
   ~title: 
-  ~max_salary: 
-  ~company: 
+  ~company: Facebook
   ~location: 
-  ~min_salary: 
-  ~max_salary: 
 }
 
 body:json {

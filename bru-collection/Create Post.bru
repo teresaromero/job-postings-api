@@ -7,12 +7,16 @@ meta {
 post {
   url: {{baseURL}}/api/v1/posts
   body: json
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: 
 }
 
 body:json {
   {
-    "title": "Test Post",
+    "title": "Test Post 3",
     "description": "Test Description",
     "extras": "Test Extras",
     "company": "Test Company",
@@ -21,8 +25,10 @@ body:json {
       "perk1",
       "perk2"
     ],
-    "min_salary": 30000,
-    "max_salary": 50000,
+    "salary": [
+      50000,
+      80000
+    ],
     "type": "full-time"
   }
 }

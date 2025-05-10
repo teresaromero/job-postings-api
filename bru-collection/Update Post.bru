@@ -7,27 +7,29 @@ meta {
 put {
   url: {{baseURL}}/api/v1/posts/:id
   body: json
-  auth: inherit
+  auth: bearer
 }
 
 params:path {
-  id: 2268187937
+  id: 614269495
 }
 
 body:json {
   {
-    "title": "Updated Post Again",
-    "description": "Test Description",
-    "extras": "Test Extras",
+    "title": "Test Post updated",
     "company": "Test Company",
     "location": "Test Location",
+    "description": "Test Description",
+    "type": "full-time",
+    "salary": [
+      50000,
+      70000
+    ],
     "perks": [
       "perk1",
       "perk2"
     ],
-    "min_salary": 30000,
-    "max_salary": 50000,
-    "type": "full-time"
+    "extras": "Test Extras"
   }
 }
 
