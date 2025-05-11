@@ -1,0 +1,11 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+       - JWT_SECRET=secret
+       - NOW=2025-05-11T00:00:00Z
+       - SEED_DATA=true
