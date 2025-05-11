@@ -84,7 +84,7 @@ func main() {
 		})
 	})
 
-	if err := engine.Run(":8080"); err != nil {
-		log.Fatalf("failed to start server: %v", err)
+	if err := engine.Run(); err != nil {
+		log.Fatalf("failed to run server: %v", err)
 	}
 }
