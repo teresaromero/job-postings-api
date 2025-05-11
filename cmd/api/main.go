@@ -37,12 +37,19 @@ func main() {
 	storage := storage.NewStorage(sorter)
 
 	if cfg.SeedData {
-		log.Println("seeding storage with test data")
-		if err := storage.Seed(); err != nil {
-			log.Fatalf("failed to seed storage: %v", err)
+		if cfg.SeedFile != "" {
+			log.Printf("seeding storage with test data from file: %s", cfg.SeedFile)
+			if err := storage.SeedFromFile(cfg.SeedFile); err != nil {
+				log.Fatalf("failed to seed storage from file: %v", err)
+			}
+		} else {
+			log.Println("seeding storage with test data")
+			if err := storage.Seed(); err != nil {
+				log.Fatalf("failed to seed storage: %v", err)
+			}
 		}
 	}
-	
+
 	repo := repository.NewRepository(storage)
 	handler := handlers.NewHandler(repo, cfg.JwtSecret)
 

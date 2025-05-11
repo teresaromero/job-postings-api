@@ -93,12 +93,12 @@ func (s *Storage) SeedFromFile(file string) error {
 	if err != nil {
 		return err
 	}
-	posts := make([]models.Post, 0)
-	if err := json.Unmarshal(bytes, &posts); err != nil {
+	var postlist models.PostList
+	if err := json.Unmarshal(bytes, &postlist); err != nil {
 		return err
 	}
-	for _, post := range posts {
-		s.postMap[post.ID] = post
+	for _, post := range postlist.Posts {
+		s.postMap[post.ID] = *post
 		s.companyIndex[post.Company]++
 	}
 

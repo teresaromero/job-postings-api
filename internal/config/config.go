@@ -13,6 +13,7 @@ type Config struct {
 	JwtSecret      []byte
 
 	SeedData bool
+	SeedFile string
 }
 
 func Load() *Config {
@@ -23,6 +24,7 @@ func Load() *Config {
 		log.Printf("SEED_DATA environment variable is not set, defaulting to false")
 		seedData = false
 	}
+	seedFile := os.Getenv("SEED_FILE")
 
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
@@ -55,6 +57,7 @@ func Load() *Config {
 	return &Config{
 		SortRulesOrder: sortRulesEnv,
 		JwtSecret:      []byte(jwtSecret),
-		SeedData:       seedData,
+		SeedData:       seedData || seedFile != "",
+		SeedFile:       seedFile,
 	}
 }
