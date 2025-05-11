@@ -87,15 +87,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/JobPostPayload'
-            example:
-              title: "Senior Software Engineer"
-              company: "Tech Corp"
-              type: freelance
-              location: "San Francisco, CA"
-              description: "Looking for an experienced software engineer with 5+ years of experience in backend development."
-              requirements: ["Java", "Spring Boot", "SQL", "AWS"]
-              max_salary: 150000
-              min_salary: 90000
       responses:
         '201':
           description: Job posting created
@@ -276,10 +267,15 @@ components:
           type: string
         type:
           $ref: '#/components/schemas/JobTypeEmun'
-        max_salary:
-          type: number
-        min_salary:
-          type: number
+        salary:
+          type: array
+          items:
+            type: number
+            minimum: 0
+            maxItems: 2
+            minItems: 2
+          example:
+            [60000,80000]
         perks:
           type: array
           items:
@@ -292,5 +288,4 @@ components:
         - location
         - description
         - type
-        - max_salary
-        - min_salary
+        - salary
