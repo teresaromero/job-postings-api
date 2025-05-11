@@ -1,7 +1,7 @@
 
 # Job Postings API
 
-The Job Posting API is a backend service which enables employers to create, update or delete job postings, while allowing to employees to search and filter on the existent jobs. 
+The Job Posting API is an MVP for a backend service which enables employers to create, update or delete job postings, while allowing to employees to search and filter on the existent jobs. 
 
 
 ## Features
@@ -14,6 +14,11 @@ The Job Posting API is a backend service which enables employers to create, upda
     2. Posts with higher salaries rank first above posts with lower salaries
     3. Posts made by companies with more open job posts rank first than those for companies with less posts
 
+  Current rules map:
+    "0": sortByCompanyPostsCount
+		"1": sortByHighSalary
+		"2": sortByLastSevenDays
+
 API Documentation available [here](/openapi.yaml)
 
 ## Tech Stack, Architecture and Design Decisions
@@ -21,7 +26,7 @@ API Documentation available [here](/openapi.yaml)
 ### Tech Stack
 
 - Go & Gin Framework
-- Unit testing: go test
+- Unit & Integration testing: go test
 - Lint: go vet
 
 ### Decisions
@@ -53,12 +58,29 @@ API Documentation available [here](/openapi.yaml)
 
 - Token Issuance: POST /auth/token separates auth concerns from business logic, centralizing JWT secret use.
 
+### Future work
+
+This MVP is running on in-memory structures. This provides an easy interface to validate the sorting methods but is not production ready.
+In order to evolve and be able to scale the following should be achieved:
+
+- Pagination. There is no pagination in the current implementation. As the user would be potentially scrolling looking into the job postings, a cursor pagination would be a good fit for the list handler.
+
+- Use a distributed database to store the job postings. Having data decoupled from the api will allow to scale the application horizontally and share the same data.
+
+- The custom sorting feature as implemented runs over the data for every rule, creating a final list with the combination of filters by priority. This increases also the overhead while data increases. This can take some time of processing, which can block the request. An improvement would be to implement a worker to perform the sorting in async and provide the client with an entrypoint to check the status of the process, then read the results. This results can be read paginated also, which will also improve the performance.
+
+- A cache to serve faster queries that have already been requested.
+
+
 ## Environment Variables
 
 - JWT_SECRET: Secret for signing JWT. String (required).
-- SEED_DATA: Enable the initial seed of the data. Bool (optional).
+- SEED_DATA: Enable the initial seed with random fake data. Bool (optional).
+- SEED_FILE: Provide a JSON file with data to init the service. String (optional).
+- NOW: Date with format `2025-05-11T00:00:00Z` to mock current day. String (optional).
+- SORT_RULES_ORDER: Sorting rules al mapped. Default is ["0", "1", "2"] 
 
-## Run Locally
+## Run Locally and Development
 
 Clone the project
 
@@ -77,7 +99,13 @@ Use the Makefile commands to run locally:
 - `run`: builds the binary and runs it
 - `clean`: remove the binary
 - `test`: run unit tests
+- `integration-test`: run integration tests
 - `lint`: run code lint and openapi validation. [Vacuum](https://github.com/daveshanley/vacuum) is required to be locally installed.
+
+
+### Dockerfile
+
+Provided Dockerfile and docker-compose to run the api inside a container.
 
 
 ## License
