@@ -2,9 +2,9 @@ package storage
 
 import (
 	"fmt"
+	"job-postings-api/internal/config"
 	"job-postings-api/internal/errors"
 	"job-postings-api/internal/models"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -48,8 +48,8 @@ func (s *Storage) CreatePost(post *models.PostRequestPayload) (*models.Post, err
 		Salary:      post.Salary,
 		Perks:       post.Perks,
 		Extras:      post.Extras,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   config.Now(),
+		UpdatedAt:   config.Now(),
 	}
 
 	s.postMap[p.ID] = p
@@ -72,7 +72,7 @@ func (s *Storage) UpdatePost(id string, post *models.PostRequestPayload) error {
 	item.Salary = post.Salary
 	item.Perks = post.Perks
 	item.Extras = post.Extras
-	item.UpdatedAt = time.Now()
+	item.UpdatedAt = config.Now()
 
 	s.postMap[id] = item
 	if item.Company != post.Company {

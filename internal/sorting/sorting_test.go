@@ -1,6 +1,7 @@
 package sorting
 
 import (
+	"job-postings-api/internal/config"
 	"job-postings-api/internal/models"
 	"testing"
 	"time"
@@ -9,8 +10,13 @@ import (
 )
 
 func TestSortPosts(t *testing.T) {
-	now := time.Now()
 
+	// Mock the Now function to return a fixed time for testing
+	config.Now = func() time.Time { return time.Date(2025, 5, 1, 0, 0, 0, 0, time.UTC) }
+	defer func() {
+		config.Now = time.Now
+	}()
+	now := config.Now()
 	tests := []struct {
 		name       string
 		posts      []*models.Post

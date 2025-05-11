@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"job-postings-api/internal/config"
 	"job-postings-api/internal/errors"
 	"job-postings-api/internal/models"
 	"net/http"
@@ -150,7 +151,7 @@ func (h *Handler) GetToken(c *gin.Context) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"username": creds.Username,
-		"exp":      time.Now().Add(time.Hour * 24).Unix(),
+		"exp":      config.Now().Add(time.Hour * 24).Unix(),
 	})
 
 	tokenString, err := token.SignedString(h.jwtSecret)

@@ -1,7 +1,10 @@
 package storage
 
 import (
+	"encoding/json"
+	"job-postings-api/internal/config"
 	"job-postings-api/internal/models"
+	"os"
 	"sort"
 	"time"
 
@@ -23,7 +26,7 @@ func (s *Storage) Seed() error {
 
 func fakePost() (*models.Post, error) {
 
-	now := time.Now()
+	now := config.Now()
 
 	randomDay, err := faker.RandomInt(1, 20, 1)
 	if err != nil {
@@ -83,4 +86,21 @@ func fakePost() (*models.Post, error) {
 		UpdatedAt:   updatedAt,
 	}
 	return &fakePost, nil
+}
+
+func (s *Storage) SeedFromFile(file string) error {
+	bytes, err := os.ReadFile(file)
+	if err != nil {
+		return err
+	}
+	posts := make([]models.Post, 0)
+	if err := json.Unmarshal(bytes, &posts); err != nil {
+		return err
+	}
+	for _, post := range posts {
+		s.postMap[post.ID] = post
+		s.companyIndex[post.Company]++
+	}
+
+	return nil
 }

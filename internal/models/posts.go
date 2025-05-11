@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"job-postings-api/internal/config"
+	"time"
+)
 
 type PostList struct {
 	Posts []*Post `json:"posts"`
@@ -24,5 +27,5 @@ type Post struct {
 // CreatedAtLastSevenDays checks if the post was created in the last 7 days
 // and returns true if it was, false otherwise.
 func (p *Post) CreatedAtLastSevenDays() bool {
-	return time.Since(p.CreatedAt).Hours() < 7*24
+	return config.Now().Sub(p.CreatedAt).Hours() < 7*24
 }

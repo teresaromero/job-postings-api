@@ -1,10 +1,10 @@
 package storage
 
 import (
+	"job-postings-api/internal/config"
 	"job-postings-api/internal/errors"
 	"job-postings-api/internal/models"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -34,8 +34,8 @@ func TestStorage_GetPost(t *testing.T) {
 		Salary:      []int{50000, 80000},
 		Perks:       []string{"Health Insurance"},
 		Extras:      "Flexible Hours",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   config.Now(),
+		UpdatedAt:   config.Now(),
 	}
 	s.postMap[testPost.ID] = testPost
 
@@ -142,8 +142,8 @@ func TestStorage_UpdatePost(t *testing.T) {
 		Salary:      []int{50000, 80000},
 		Perks:       []string{"Health Insurance"},
 		Extras:      "Flexible Hours",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   config.Now(),
+		UpdatedAt:   config.Now(),
 	}
 	s.postMap[testPost.ID] = testPost
 
@@ -217,8 +217,8 @@ func TestStorage_DeletePost(t *testing.T) {
 		Salary:      []int{50000, 80000},
 		Perks:       []string{"Health Insurance"},
 		Extras:      "Flexible Hours",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		CreatedAt:   config.Now(),
+		UpdatedAt:   config.Now(),
 	}
 	s.postMap[testPost.ID] = testPost
 
@@ -271,8 +271,8 @@ func TestStorage_ListPosts(t *testing.T) {
 			Salary:      []int{50000, 80000},
 			Perks:       []string{"Health Insurance"},
 			Extras:      "Flexible Hours",
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
+			CreatedAt:   config.Now(),
+			UpdatedAt:   config.Now(),
 		},
 		{
 			ID:          "2",
@@ -284,8 +284,8 @@ func TestStorage_ListPosts(t *testing.T) {
 			Salary:      []int{60000, 90000},
 			Perks:       []string{"401k"},
 			Extras:      "Gym Membership",
-			CreatedAt:   time.Now(),
-			UpdatedAt:   time.Now(),
+			CreatedAt:   config.Now(),
+			UpdatedAt:   config.Now(),
 		},
 	}
 
