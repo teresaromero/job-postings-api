@@ -2,12 +2,13 @@ module job-postings-api
 
 go 1.24.2
 
-require github.com/gin-gonic/gin v1.10.0
+require (
+	github.com/gin-gonic/gin v1.10.0
+	github.com/go-faker/faker/v4 v4.6.1
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/go-faker/faker/v4 v4.6.1 // indirect
-	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 )

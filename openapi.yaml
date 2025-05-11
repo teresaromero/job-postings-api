@@ -29,6 +29,37 @@ paths:
         For example:
         export SORT_RULES_ORDER=[1,0,2]
         "
+      parameters:
+        - name: title
+          in: query
+          description: Filter by job title
+          required: false
+          schema:
+            type: string
+        - name: company
+          in: query
+          description: Filter by company name
+          required: false
+          schema:
+            type: string
+        - name: location
+          in: query
+          description: Filter by job location
+          required: false
+          schema:
+            type: string
+        - name: min_salary
+          in: query
+          description: Filter by minimum salary
+          required: false
+          schema:
+            type: number
+        - name: max_salary
+          in: query
+          description: Filter by maximum salary
+          required: false
+          schema:
+            type: number
       responses:
         '200':
           description: Successful response
