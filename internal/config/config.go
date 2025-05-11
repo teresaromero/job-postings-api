@@ -5,6 +5,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Config struct {
@@ -32,6 +33,23 @@ func Load() *Config {
 	var sortRulesEnv []string
 	if sortRulesEnvStr != "" {
 		sortRulesEnv = strings.Split(sortRulesEnvStr, ",")
+	}
+
+	ginMode := os.Getenv("GIN_MODE")
+	// Only for testing purposes
+	customNowDate := os.Getenv("NOW")
+	if ginMode == "release" && customNowDate != "" {
+		log.Fatalf("Custom NOW date is not allowed in release mode")
+	}
+	if customNowDate != "" {
+		log.Default().Printf("Custom NOW date set to: %s", customNowDate)
+		nowDate, err := time.Parse(time.RFC3339, customNowDate)
+		if err != nil {
+			log.Fatalf("Invalid NOW date format: %v", err)
+		}
+		Now = func() time.Time {
+			return nowDate
+		}
 	}
 
 	return &Config{
