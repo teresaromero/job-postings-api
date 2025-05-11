@@ -38,16 +38,30 @@ func TestMain(t *testing.M) {
 		log.Fatalf("failed to wait for main.go process: %v", err)
 	}
 
+	removeBinary()
+
 	log.Default().Printf("Test completed with code: %d", code)
 	os.Exit(code)
 }
 
 func buildBinary() {
+	log.Default().Println("Building binary...")
 	cmdRun := exec.Command("go", "build", "-o", "bin/api", "cmd/api/main.go")
 	cmdRun.Dir = "../"
 	cmdRun.Stdout = os.Stdout
 	cmdRun.Stderr = os.Stderr
 	if err := cmdRun.Run(); err != nil {
-		log.Fatalf("failed to run make build: %v", err)
+		log.Fatalf("failed to run build: %v", err)
+	}
+}
+
+func removeBinary() {
+	log.Default().Println("Removing binary...")
+	cmdRun := exec.Command("rm", "bin/api")
+	cmdRun.Dir = "../"
+	cmdRun.Stdout = os.Stdout
+	cmdRun.Stderr = os.Stderr
+	if err := cmdRun.Run(); err != nil {
+		log.Fatalf("failed to run remove binary: %v", err)
 	}
 }
