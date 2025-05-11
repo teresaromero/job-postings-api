@@ -15,6 +15,7 @@ func TestMain(t *testing.M) {
 
 	buildBinary()
 
+	// Integration tests are taking into account the default rule ordering
 	cmdRun := exec.Command("./bin/api")
 	cmdRun.Env = []string{
 		"PORT=8080",

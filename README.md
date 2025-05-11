@@ -3,7 +3,6 @@
 
 The Job Posting API is an MVP for a backend service which enables employers to create, update or delete job postings, while allowing to employees to search and filter on the existent jobs. 
 
-
 ## Features
 
 - CRUD Operations for Jobs: Create, Update and Delete require Authentication and Authorization
@@ -71,7 +70,6 @@ In order to evolve and be able to scale the following should be achieved:
 
 - A cache to serve faster queries that have already been requested.
 
-
 ## Environment Variables
 
 - JWT_SECRET: Secret for signing JWT. String (required).
@@ -102,11 +100,15 @@ Use the Makefile commands to run locally:
 - `integration-test`: run integration tests
 - `lint`: run code lint and openapi validation. [Vacuum](https://github.com/daveshanley/vacuum) is required to be locally installed.
 
+### Adding more rules or filters
+
+Add more filters by adding the params to [isAllowedByFilter](internal/storage/filter.go)
+
+Add more rules to the sorting map [Sorter.rules](internal/sorting/sorting.go) and set the new order at the default or use the environment [SORT_RULES_ORDER](#environment-variables)
 
 ### Dockerfile
 
 Provided Dockerfile and docker-compose to run the api inside a container.
-
 
 ## License
 
