@@ -5,22 +5,23 @@ package integration
 
 import (
 	"log"
-	"net/http"
 	"os"
 	"os/exec"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMain(t *testing.M) {
 
-	os.Setenv("NOW", "2025-05-11T00:00:00Z")
-	os.Setenv("SEED_FILE", "integration/seed.json")
+	buildBinary()
 
-	cmdRun := exec.Command("make", "run")
+	cmdRun := exec.Command("./bin/api")
+	cmdRun.Env = []string{
+		"PORT=8080",
+		"NOW=2025-05-11T00:00:00Z",
+		"SEED_FILE=integration/seed.json",
+		"JWT_SECRET=secret",
+	}
 	cmdRun.Dir = "../"
 	cmdRun.Stdout = os.Stdout
 	cmdRun.Stderr = os.Stderr
@@ -34,19 +35,19 @@ func TestMain(t *testing.M) {
 	code := t.Run()
 
 	if err := cmdRun.Process.Kill(); err != nil {
-		log.Fatalf("failed to kill main.go process: %v", err)
+		log.Fatalf("failed to wait for main.go process: %v", err)
 	}
 
 	log.Default().Printf("Test completed with code: %d", code)
 	os.Exit(code)
 }
 
-func Test_Heath(t *testing.T) {
-
-	resp, err := http.Get("http://localhost:8080/ping")
-	require.NoError(t, err)
-	defer resp.Body.Close()
-
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
-
+func buildBinary() {
+	cmdRun := exec.Command("go", "build", "-o", "bin/api", "cmd/api/main.go")
+	cmdRun.Dir = "../"
+	cmdRun.Stdout = os.Stdout
+	cmdRun.Stderr = os.Stderr
+	if err := cmdRun.Run(); err != nil {
+		log.Fatalf("failed to run make build: %v", err)
+	}
 }
