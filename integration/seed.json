@@ -1,0 +1,83 @@
+{
+  "posts": [
+    {
+      "id": "1",
+      "title": "Senior Engineer",
+      "company": "CompanyA",
+      "location": "Remote",
+      "description": "Build scalable services",
+      "type": "full-time",
+      "salary": [70000, 90000],
+      "perks": ["Health", "401k"],
+      "extras": "",
+      "created_at": "2025-05-10T12:00:00Z",
+      "updated_at": "2025-05-10T12:00:00Z"
+    },
+    {
+      "id": "2",
+      "title": "Mid-Level Developer",
+      "company": "CompanyB",
+      "location": "London",
+      "description": "Work on web apps",
+      "type": "full-time",
+      "salary": [50000, 60000],
+      "perks": ["Gym"],
+      "extras": "",
+      "created_at": "2025-05-08T09:00:00Z",
+      "updated_at": "2025-05-08T09:00:00Z"
+    },
+    {
+      "id": "3",
+      "title": "Junior Developer",
+      "company": "CompanyA",
+      "location": "Madrid",
+      "description": "Assist in feature development",
+      "type": "internship",
+      "salary": [30000, 40000],
+      "perks": [],
+      "extras": "",
+      "created_at": "2025-04-30T15:00:00Z",
+      "updated_at": "2025-04-30T15:00:00Z"
+    },
+    {
+      "id": "4",
+      "title": "Backend Engineer",
+      "company": "CompanyC",
+      "location": "Berlin",
+      "description": "API development",
+      "type": "contract",
+      "salary": [45000, 55000],
+      "perks": ["Remote"],
+      "extras": "",
+      "created_at": "2025-04-29T10:30:00Z",
+      "updated_at": "2025-04-29T10:30:00Z"
+    },
+    {
+      "id": "5",
+      "title": "DevOps Specialist",
+      "company": "CompanyA",
+      "location": "Paris",
+      "description": "Maintain CI/CD pipelines",
+      "type": "full-time",
+      "salary": [65000, 75000],
+      "perks": ["Stock Options"],
+      "extras": "",
+      "created_at": "2025-04-01T08:00:00Z",
+      "updated_at": "2025-04-01T08:00:00Z"
+    },
+    {
+      "id": "6",
+      "title": "Frontend Developer",
+      "company": "CompanyC",
+      "location": "Remote",
+      "description": "Develop UI components",
+      "type": "part-time",
+      "salary": [40000, 50000],
+      "perks": [],
+      "extras": "",
+      "created_at": "2025-05-01T14:45:00Z",
+      "updated_at": "2025-05-01T14:45:00Z"
+    }
+  ],
+  "count": 6
+}
