@@ -21,7 +21,6 @@ func Load() *Config {
 	seedDataStr := os.Getenv("SEED_DATA")
 	seedData, err := strconv.ParseBool(seedDataStr)
 	if err != nil {
-		log.Printf("SEED_DATA environment variable is not set, defaulting to false")
 		seedData = false
 	}
 	seedFile := os.Getenv("SEED_FILE")
