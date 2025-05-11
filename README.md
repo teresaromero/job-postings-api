@@ -1,5 +1,6 @@
-
 # Job Postings API
+
+[![Housekeeping](https://github.com/teresaromero/job-postings-api/actions/workflows/housekeeping.yaml/badge.svg?branch=main&event=push)](https://github.com/teresaromero/job-postings-api/actions/workflows/housekeeping.yaml)
 
 The Job Posting API is an MVP for a backend service which enables employers to create, update or delete job postings, while allowing to employees to search and filter on the existent jobs. 
 
