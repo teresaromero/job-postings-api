@@ -40,4 +40,4 @@ jobs:
       - name: Install Vacuum
         run: |
           curl -fsSL https://quobix.com/scripts/install_vacuum.sh | sh
-          vacuum lint -dexq openapi.yaml
+          make lint-openapi

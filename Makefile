@@ -30,8 +30,10 @@ test:
 lint:
 	@echo "Linting..."
 	go vet ./...
-	vacuum lint -dexq openapi.yaml
 
 integration-test:
 	@echo "Running integration tests..."
 	go test -v -tags=integration ./integration/...
+
+lint-openapi:
+	vacuum lint -dexq openapi.yaml
