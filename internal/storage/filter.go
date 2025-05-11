@@ -7,14 +7,15 @@ import (
 
 // isAllowedByFilter checks if the job does not match the filter criteria.
 func isAllowedByFilter(job models.Post, filter models.ListRequestQueryParams) bool {
-	// TODO: enhance the filter support with lowecase comparison
-	if filter.Company != "" && filter.Company != job.Company {
+
+	if filter.Company != "" && !strings.EqualFold(filter.Company, job.Company) {
 		return false
 	}
-	if filter.Title != "" && !strings.Contains(job.Title, filter.Title) {
+	if filter.Title != "" && (!strings.EqualFold(job.Title, filter.Title) &&
+		!strings.Contains(strings.ToLower(job.Title), strings.ToLower(filter.Title))) {
 		return false
 	}
-	if filter.Location != "" && !strings.Contains(job.Location, filter.Location) {
+	if filter.Location != "" && !strings.EqualFold(job.Location, filter.Location) {
 		return false
 	}
 	if filter.MaxSalary != 0 &&

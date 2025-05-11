@@ -30,6 +30,14 @@ func Test_isAllowedByFilter(t *testing.T) {
 			want: true,
 		},
 		{
+			name: "match company lowecase",
+			job:  testJob,
+			filter: models.ListRequestQueryParams{
+				Company: "test company",
+			},
+			want: true,
+		},
+		{
 			name: "no match company",
 			job:  testJob,
 			filter: models.ListRequestQueryParams{
@@ -38,10 +46,34 @@ func Test_isAllowedByFilter(t *testing.T) {
 			want: false,
 		},
 		{
-			name: "match title",
+			name: "match title partial",
 			job:  testJob,
 			filter: models.ListRequestQueryParams{
 				Title: "Software",
+			},
+			want: true,
+		},
+		{
+			name: "match title",
+			job:  testJob,
+			filter: models.ListRequestQueryParams{
+				Title: "Software Engineer",
+			},
+			want: true,
+		},
+		{
+			name: "match title partial lowercase",
+			job:  testJob,
+			filter: models.ListRequestQueryParams{
+				Title: "software",
+			},
+			want: true,
+		},
+		{
+			name: "match title lowercase",
+			job:  testJob,
+			filter: models.ListRequestQueryParams{
+				Title: "software engineer",
 			},
 			want: true,
 		},
@@ -58,6 +90,14 @@ func Test_isAllowedByFilter(t *testing.T) {
 			job:  testJob,
 			filter: models.ListRequestQueryParams{
 				Location: "Remote",
+			},
+			want: true,
+		},
+		{
+			name: "match location lowercase",
+			job:  testJob,
+			filter: models.ListRequestQueryParams{
+				Location: "remote",
 			},
 			want: true,
 		},
